@@ -65,10 +65,6 @@
         <a class="btn btn-primary" href="{{ path('ujm_question_new', { 'exoID': exoID }) }}">
             <i class="icon-plus"></i> {{ 'create a new entry' | trans }}
         </a>
-        <a class="btn btn-primary" href="#" onclick="importQuestion('{{ path('ujm_exercise_validate_import') }}',
-            '{{ path('ujm_exercise_validate_import_shared') }}', {{ exoID }}, {{ pageToGo }}, '{{ 'nothingToImport' | trans }}');event.preventDefault();">
-                <i class="icon-download"></i> {{ 'import' | trans }}
-        </a>
     </div>
     <div class="list-group">
         <div class="list-group-item">
@@ -109,7 +105,7 @@
                                         <i class="icon-chevron-down" id="downI"  style="display: none;"></i>
                                         {{ 'question' | trans }}
                                     </th>
-                                    <th class="classic">{{ 'import' | trans }}</th>
+                                    <th class="classic">{{ 'actions' | trans }}</th>
                                 </tr>
                             </thead>
                             <tbody>
@@ -126,7 +122,12 @@
                                     <td class="classic">
                                         <ul class="list-unstyled">
                                             <li>
-                                                <input type="checkbox" name ="my" value="{{ interaction.question.id }}">
+                                                <a class="btn btn-default" data-toggle="tooltip" title="{{ 'import' | trans }}" 
+                                                   href="{{ path('ujm_exercise_validate_import',
+                                                        { 'exoID': exoID, 'qid': interaction.question.id,
+                                                        'pageGoNow': pageToGo }) }}">
+                                                    <i class="icon-download"></i>
+                                                </a>        
                                             </li>
                                         </ul>
                                     </td>
@@ -189,7 +190,7 @@
                                         {{ 'question' | trans }}
                                     </th>
                                     <th class="classic">{{ 'shared by' | trans }}</th>
-                                    <th class="classic">{{ 'import' | trans }}</th>
+                                    <th class="classic">{{ 'actions' | trans }}</th>
                                 </tr>
                             </thead>
                             <tbody>
@@ -210,7 +211,12 @@
                                     <td class="classic">
                                         <ul class="list-unstyled">
                                             <li>
-                                                <input type="checkbox" name ="shared" value="{{ myQShare.question.id }}">
+                                                <a class="btn btn-default" data-toggle="tooltip" title="{{ 'import' | trans }}" 
+                                                   href="{{ path('ujm_exercise_validate_import_shared',
+                                                    { 'exoID': exoID, 'qid': myQShare.question.id,
+                                                        'pageGoNow': pageToGo }) }}">
+                                                    <i class="icon-download"></i>
+                                                </a>
                                             </li>
                                         </ul>
                                     </td>

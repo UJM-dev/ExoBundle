@@ -366,48 +366,42 @@ class ExerciseController extends Controller
      * To record the question's import.
      *
      */
-    public function importValidateAction()
+    public function importValidateAction($exoID, $qid, $pageGoNow)
     {
-        $request = $this->container->get('request');
+        $user = $this->container->get('security.context')->getToken()->getUser();
+        $question = $this->getDoctrine()
+            ->getManager()
+            ->getRepository('UJMExoBundle:Question')
+            ->getControlOwnerQuestion($user->getId(), $qid);
 
-        if ($request->isXmlHttpRequest()) {
-            $exoID = $request->request->get('exoID');
-            $pageGoNow = $request->request->get('pageGoNow');
-            $qid = $request->request->get('qid');
-
-            $user = $this->container->get('security.context')->getToken()->getUser();
+        if (count($question) > 0) {
             $em = $this->getDoctrine()->getManager();
 
-            foreach ($qid as $q) {
-                $question = $this->getDoctrine()
-                    ->getManager()
-                    ->getRepository('UJMExoBundle:Question')
-                    ->getControlOwnerQuestion($user->getId(), $q);
+            $exo = $em->getRepository('UJMExoBundle:Exercise')->find($exoID);
+            $question = $em->getRepository('UJMExoBundle:Question')->find($qid);
 
-                if (count($question) > 0) {
+            $eq = new ExerciseQuestion($exo, $question);
 
-                    $exo = $em->getRepository('UJMExoBundle:Exercise')->find($exoID);
-                    $question = $em->getRepository('UJMExoBundle:Question')->find($q);
+            $dql = 'SELECT max(eq.ordre) FROM UJM\ExoBundle\Entity\ExerciseQuestion eq '
+                 . 'WHERE eq.exercise='.$exoID;
+            $query = $em->createQuery($dql);
+            $maxOrdre = $query->getResult();
 
-                    $eq = new ExerciseQuestion($exo, $question);
-
-                    $dql = 'SELECT max(eq.ordre) FROM UJM\ExoBundle\Entity\ExerciseQuestion eq '
-                         . 'WHERE eq.exercise='.$exoID;
-
-                    $query = $em->createQuery($dql);
-                    $maxOrdre = $query->getResult();
-
-                    $eq->setOrdre((int) $maxOrdre[0][1] + 1);
-                    $em->persist($eq);
-                }
-            }
+            $eq->setOrdre((int) $maxOrdre[0][1] + 1);
+            $em->persist($eq);
 
             $em->flush();
 
-            $url = (string)$this->generateUrl('ujm_exercise_questions',array('id' => $exoID,'pageNow' => $pageGoNow));
-
-            return new \Symfony\Component\HttpFoundation\Response($url);
-         } else {
+            return $this->redirect(
+                $this->generateUrl(
+                    'ujm_exercise_questions',
+                    array(
+                        'id' => $exoID,
+                        'pageNow' => $pageGoNow
+                    )
+                )
+            );
+        } else {
             return $this->redirect($this->generateUrl('ujm_exercise_import_question', array('exoID' => $exoID)));
         }
     }
@@ -416,43 +410,39 @@ class ExerciseController extends Controller
      * To record the shared question's import.
      *
      */
-    public function importValidateSharedAction()
+    public function importValidateSharedAction($exoID, $qid, $pageGoNow)
     {
-        $request = $this->container->get('request');
+        $em = $this->getDoctrine()->getManager();
 
-        if ($request->isXmlHttpRequest()) {
-            $exoID = $request->request->get('exoID');
-            $pageGoNow = $request->request->get('pageGoNow');
-            $qid = $request->request->get('qid');
+        $question = $em->getRepository('UJMExoBundle:Share')
+            ->findBy(array('question' => $qid));
 
-            $em = $this->getDoctrine()->getManager();
+        if (count($question) > 0) {
 
-            foreach ($qid as $q) {
-                $question = $em->getRepository('UJMExoBundle:Share')
-                    ->findBy(array('question' => $q));
+            $exo = $em->getRepository('UJMExoBundle:Exercise')->find($exoID);
+            $question = $em->getRepository('UJMExoBundle:Question')->find($qid);
 
-                if (count($question) > 0) {
+            $eq = new ExerciseQuestion($exo, $question);
 
-                    $exo = $em->getRepository('UJMExoBundle:Exercise')->find($exoID);
-                    $question = $em->getRepository('UJMExoBundle:Question')->find($q);
+            $dql = 'SELECT max(eq.ordre) FROM UJM\ExoBundle\Entity\ExerciseQuestion eq '
+                 . 'WHERE eq.exercise='.$exoID;
+            $query = $em->createQuery($dql);
+            $maxOrdre = $query->getResult();
 
-                    $eq = new ExerciseQuestion($exo, $question);
-
-                    $dql = 'SELECT max(eq.ordre) FROM UJM\ExoBundle\Entity\ExerciseQuestion eq '
-                         . 'WHERE eq.exercise='.$exoID;
-                    $query = $em->createQuery($dql);
-                    $maxOrdre = $query->getResult();
-
-                    $eq->setOrdre((int) $maxOrdre[0][1] + 1);
-                    $em->persist($eq);
-                }
-            }
+            $eq->setOrdre((int) $maxOrdre[0][1] + 1);
+            $em->persist($eq);
 
             $em->flush();
 
-            $url = (string)$this->generateUrl('ujm_exercise_questions',array('id' => $exoID,'pageNow' => $pageGoNow));
-
-            return new \Symfony\Component\HttpFoundation\Response($url);
+            return $this->redirect(
+                $this->generateUrl(
+                    'ujm_exercise_questions',
+                    array(
+                        'id' => $exoID,
+                        'pageNow' => $pageGoNow
+                    )
+                )
+            );
         } else {
             return $this->redirect($this->generateUrl('ujm_exercise_import_question', array('exoID' => $exoID)));
         }
