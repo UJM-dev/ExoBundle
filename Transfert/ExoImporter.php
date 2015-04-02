@@ -63,11 +63,13 @@ class ExoImporter extends Importer implements ConfigurationInterface
         $rootPath = $this->getRootPath();
 
         $rootNode
-            ->children()
-                ->arrayNode('file')
-                    ->children()
-                        ->scalarNode('path')->isRequired()->end()
-                        ->scalarNode('version')->end()
+            ->prototype('array')
+                ->children()
+                    ->arrayNode('file')
+                        ->children()
+                            ->scalarNode('path')->isRequired()->end()
+                            ->scalarNode('version')->end()
+                        ->end()
                     ->end()
                 ->end()
             ->end()
