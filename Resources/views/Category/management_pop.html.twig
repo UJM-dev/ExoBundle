@@ -6,11 +6,14 @@
                 </br>
             </div>
             <div class="modal-body">
-                <h3 class="panel-title">{{'category'|trans}}</h3>
-                <input class="form-control" type="text" required="required" id='category' name="category" />
-                <input type="hidden" value="{{ edit }}" id="edit" />
-
+                <div class="control-label"><h3 class="panel-title">{{'category'|trans}}</h3></div>
+                {{ form_widget(form.category) }}
+                <div class="control-group"><a title="{{ 'edit a category' | trans }}" id="editCategory" style="display: inline-block;" class="btn btn-primary" onclick="openCat('{{ path('ujm_category_new_pop', {'edit': 1} ) }}');"><i class="fa fa-pencil"></i></a>
+                <a title="{{ 'create a new category' | trans }}" id="addCategory" style="display: inline-block;" class="btn btn-primary" onclick="openCat('{{ path('ujm_category_new_pop') }}');"><i class="fa fa-plus"></i></a>
+                <a title="{{ 'drop category' | trans }}" id="linkedCategory" style="display: inline-block;" class="btn btn-primary" id="lien_category_drop" onclick="dropCategory();"><i class="fa fa-trash-o"></i></a>
+                </div>
                 <div class="modal-footer">
+                    <input type="hidden" value="{{ oldValueCat }}" id="oldValueCat" />
                     <button type="button" class="btn btn-default" data-dismiss="modal">{{ 'cancel'|trans({}, 'platform') }}</button>
                     <button type="submit" class="btn btn-primary" id="submit_category">{{ 'ok'|trans({}, 'platform') }}</button>
 
@@ -19,33 +22,23 @@
         </div>
     </div>
 </div>
-
+<script type="text/javascript" src="{{ asset('bundles/ujmexo/js/allQuestionsType.js') }}"></script>
 <script type="text/javascript">
-   
+     
     $("#submit_category").click(function () {
-        var nom_cat = $("#category").val();
+       // var id_cat = $("#ujm_exobundle_questiontype_category").val();
+        var nom_cat = $("#ujm_exobundle_questiontype_category option:selected").text();
         alert(nom_cat);
-        if (nom_cat == '') {
+        
+        if (nom_cat == '' ) {
             alert('{{ 'wrongName'|trans }}');
             return false;
         }
-
-        var exists = false;
-        $("*[id$='_interaction_question_category'] option").each(function() {
-
-            if ($(this).text() == nom_cat) {
-                exists = true;
-                return false;
-            }
-        });
-
-        if (exists) {
-            alert('{{ 'alreadyExist'|trans }}');
-        } else {
-            if ($('#edit').val() == 0) {
+        else{      
+            alert('ici');
                 $.ajax({
                     type: "POST",
-                    url: "{{path('ujm_category_create_pop')}}",
+                    url: "{{path('ujm_category_changeCat')}}",
                     data: {
                         value: nom_cat,
                         locker : '0'
@@ -61,7 +54,7 @@
                         $('#modalcategory').modal('hide');
                     }
                 });
-            } else {
+ /**           } else {
                 // Id of the category to update
                 var idOldCategory = $("*[id$='_interaction_question_category']").val();
                 // New label of the category
@@ -87,13 +80,9 @@
                         $('#modalcategory').modal('hide');
                     }
                 });
-            }
+            }*/
         }
-
     });
 
-    if ($('#edit').val() == 1) {
-        $('#category').val($("*[id$='_interaction_question_category'] option:selected").text());
-    }
     $('#modalcategory').modal('toggle', 'show');
 </script>

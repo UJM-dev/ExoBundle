@@ -6,6 +6,9 @@ use Symfony\Bundle\FrameworkBundle\Controller\Controller;
 
 use UJM\ExoBundle\Entity\Category;
 use UJM\ExoBundle\Form\CategoryType;
+use UJM\ExoBundle\Form\QuestionType;
+use UJM\ExoBundle\Entity\Question;
+
 use Symfony\Component\HttpFoundation\Response;
 
 /**
@@ -58,7 +61,30 @@ class CategoryController extends Controller
         );
     }
 
-
+/**
+     * Displays a form to create a new Category entity in AJAX window.
+     *
+     * @access public
+     *
+     * @param integer $edit 0 or 1 new category or editcategory
+     *
+     * @return \Symfony\Component\HttpFoundation\Response
+     */
+    public function managementAction($oldValueCat)
+    {
+        $entity = new Question();
+        $request = $this->getRequest();
+        $form   = $this->createForm(new QuestionType($this->container->get('security.context')->getToken()->getUser()), $entity);
+        $form->handleRequest($request);
+        
+        return $this->render(
+            'UJMExoBundle:Category:management_pop.html.twig', array(
+            'entity' => $entity,
+            'form'   => $form->createView(),
+            'oldValueCat' => $oldValueCat
+            )
+        );
+    }
 
     /**
      * Record a new Category entity to the AJAX form.
@@ -153,6 +179,20 @@ class CategoryController extends Controller
             return new Response($entity->getId());
 
         } else {
+
+            return 0;
+        }
+    }
+    
+    
+    public function changeCatAction()
+    {
+        $request = $this->container->get('request');
+        $em = $this->getDoctrine()->getManager();
+        if ($request->isXmlHttpRequest()) {
+            
+        }
+        else {
 
             return 0;
         }

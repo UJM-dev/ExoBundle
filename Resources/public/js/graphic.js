@@ -139,12 +139,12 @@ function LoadPic(path, prefx, iddoc) {
 
         imgx = parseInt(leftpos);
         imgx -= $('#Answer').position().left; // $('#Answer').prop('offsetLeft');
-//            imgx=0;
+         //          imgx=0;
           //  alert(imgx);
         // Position y answer zone
         imgy = parseInt(toppos);
         imgy -= $('#Answer').position().top;
-//            imgy=0;
+  //          imgy=0;
           //  alert(imgy);
         // With the position of the dragged image
         $('#dragContainer' + grade).css({

@@ -19,3 +19,11 @@ ujm_category_alter:
     defaults: {_controller: UJMExoBundle:Category:alter }
     requirements:
       _method: POST
+      
+ujm_category_management:
+    pattern: /management_pop/{oldValueCat}
+    defaults: { _controller: UJMExoBundle:Category:management }
+    
+ujm_category_changeCat:
+    pattern: /changeCat
+    defaults: { _controller: UJMExoBundle:Category:changeCat }
