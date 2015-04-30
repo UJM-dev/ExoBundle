@@ -40,11 +40,11 @@ function HideOptional(type) {
 }
 /**
  * Change the icon's link according to its status
- * 
+ *
  * @param {string} idI : icon's id
  * @param {string} idDiv : div's id which appears or disappears
- */  
-function statusButton(idI,idDiv) {  
+ */
+function statusButton(idI,idDiv) {
     $('#'+idDiv).on('shown.bs.collapse', function () {
       $('#'+idI).removeClass('').addClass('fa fa-eye-slash');
     });
@@ -52,7 +52,7 @@ function statusButton(idI,idDiv) {
       $('#'+idI).removeClass('fa fa-eye-slash').addClass('');
   });
         }
-        
+
 // Delete the name of the category
 function dropCategory() {
     var idCategory = $("*[id$='_interaction_question_category']").val(); // Id of the category to delete
@@ -82,7 +82,7 @@ var categoryArray = allCategory.split(';');
 /**
  * For the view : question.html.twig
  * Action on the button edition and deleted of category
- * 
+ *
  * @var {int} idCat Id of the category
  * @var {string} valueCat Category select
  * @var {string} locker  Locked category for this user
@@ -102,7 +102,7 @@ $("*[id$='_interaction_question_category']").change(function () {
  * @param {string} locker Locked category for this user
  */
 function displayEditCategory(idCat,valueCat,locker)
-{    
+{
      for(var i = 0 ; i < categoryArray.length - 1 ; i++) {
         if (idCat == "") {
                 $('#editCategory').css({"display" : "none"});
@@ -116,9 +116,9 @@ function displayEditCategory(idCat,valueCat,locker)
                  {
                      $('#editCategory').css({"display" : "inline-block"});
                  }
-            
+
         }
-        
+
     }
 }
 
@@ -129,7 +129,7 @@ function displayEditCategory(idCat,valueCat,locker)
  * @param {string} locker Locked category for this user
  */
 function displayDeleteCategory(idCat,valueCat,locker) {
-    
+
     for(var i = 0 ; i < categoryArray.length - 1 ; i++) {
         var index = categoryArray[i].substring(0, categoryArray[i].indexOf('/'));
         var contain = categoryArray[i].substring(categoryArray[i].indexOf('/') + 1);
@@ -170,6 +170,9 @@ function addDelete(tr, deleteTrans) {
 
     // When click, delete the matching row in the table
     delLink.click(function(e) {
+        if(deleteTrans == 'newTableProposal' || deleteTrans == 'newTableLabel' ) {
+            replaceConnections();
+        }
         $(this).parent('td').parent('tr').remove();
         e.preventDefault();
         return false;
@@ -179,18 +182,17 @@ function addDelete(tr, deleteTrans) {
 $(document).ready(function() {
     $('#ujm_exobundle_interactionqcmtype_interaction_invite_ifr').height(50);
     displayOptionalFields();
-    
+
     //on ne passe par ici pour l'instant
     $('#ujm_exobundle_interactionqcmtype_interaction_invite_ifr').on('load', function() {
         placeholderTinyMCE();
-        alert("coucou");
     });
-        
+
 });
 
 function placeholderTinyMCE(){
 //    $('#mce-tinymce mce-container mce-panel').sortable({
-//        
+//
 //    });
 
     $('#ujm_exobundle_interactionqcmtype_interaction_invite_ifr').contents().find("br").css( "background-color", "#BADA55" );
@@ -204,7 +206,7 @@ function placeholderTinyMCE(){
  * @returns {Boolean}
  */
 function advancedEdition(idTextarea,btnEdition,e){
-    var textarea; 
+    var textarea;
      // If the navavigator is chrome
     var userNavigator = navigator.userAgent;
     var positionText = userNavigator.indexOf("Chrome");
@@ -216,30 +218,14 @@ function advancedEdition(idTextarea,btnEdition,e){
     if(idTextarea === 'interaction_question_description'){
         textarea =$("*[id$='"+idTextarea+"']");
     }
-    else{       
-            textarea=$("#"+idTextarea);      
+    else{
+            textarea=$("#"+idTextarea);
     }
-    if (textarea.hasClass("claroline-tiny-mce hide")) {
-         //$(".mce-tinymce mce-container mce-panel").remove();
-        // tinyMCE.activeEditor.remove();       
- //       textarea.removeClass("mce-tinymce mce-container mce-panel");
-//           $(textarea).removeClass("claroline-tiny-mce");
-//            $(textarea).removeClass("hide");
-//            $(textarea).removeAttr('style');
-//            $(textarea).removeData("data-theme");
-//            $(textarea).parent('td').children('div').addClass("hide");
-//            $(textarea).parent('td').find('a').text(advEditionLang);
-        } else {           
-           textarea.addClass("claroline-tiny-mce hide");
-           textarea.data("data-theme","advanced");
-           $('#'+btnEdition).remove();
-//            $("#"+idProposalVal).parent('td').children('div').removeClass("hide");
-//            $("#"+idProposalVal).parent('td').find('a').text(remAdvEditionLang);
-
-       }
-
-        e.preventDefault();
-        return false;
+       textarea.addClass("claroline-tiny-mce hide");
+       textarea.data("data-theme","advanced");
+       $('#'+btnEdition).remove();
+       e.preventDefault();
+       return false;
 }
 
 /**
@@ -250,14 +236,14 @@ function displayOptionalFields(){
   var idCatSelect=$("*[id$='_interaction_question_category']").val();
   //Value of the description
   var valDescription =$("*[id$='_interaction_question_description']").text();
- 
+
   //Value of feelback
   var valFeedback = $("*[id$='_interaction_feedBack']").text();
 
   //Test category
   if(idCatSelect !== "" )
   {
-      $("#categoryDiv").collapse('show');            
+      $("#categoryDiv").collapse('show');
   }
   //Test description
   if(valDescription !== "")
@@ -268,12 +254,13 @@ function displayOptionalFields(){
       {
           $("*[id$='_interaction_question_description']").addClass("claroline-tiny-mce hide");
           $("*[id$='_interaction_question_description']").data("data-theme","advanced");
+          $("#buttonEdition").remove();
       }
   }
   //Test feedback
   if(valFeedback !== "")
   {
-      $("#collepseinteraction").collapse('show'); 
+      $("#collepseinteraction").collapse('show');
   }
 }
 
@@ -293,6 +280,4 @@ function textareaAdvancedEdition()
             $("#btnEdition_"+idProposalVal).remove();
         }
     });
-    
-    test();
 }
