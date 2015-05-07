@@ -47,6 +47,10 @@
         <a class="btn btn-primary" href="{{ path('ujm_question_search_question') }}">
             <i class="fa fa-question"></i> {{ 'searchQuestion' | trans }}
         </a>
+        {# Management category #}
+        <a class="btn btn-primary" style="display: none;" onclick="openCat('{{ path('ujm_category_management', {'oldValueCat': 'valueCat' }) }}');">
+            <i class="fa fa-folder-open"></i> {{ 'category' | trans }}
+        </a>
 
         {% if QuestionsExo == 'false' %}
             {% if (pagerMy.getNbResults > pagerMy.maxPerPage or pagerShared.getNbResults > pagerShared.maxPerPage) and displayAll == 0 %}

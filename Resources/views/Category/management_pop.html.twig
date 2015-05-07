@@ -6,19 +6,26 @@
                 </br>
             </div>
             <div class="modal-body">
+                <div class="control-group">
                 <div class="control-label"><h3 class="panel-title">{{'category'|trans}}</h3></div>
                 {{ form_widget(form.category) }}
-                <div class="control-group"><a title="{{ 'edit a category' | trans }}" id="editCategory" style="display: inline-block;" class="btn btn-primary" onclick="openCat('{{ path('ujm_category_new_pop', {'edit': 1} ) }}');"><i class="fa fa-pencil"></i></a>
-                <a title="{{ 'create a new category' | trans }}" id="addCategory" style="display: inline-block;" class="btn btn-primary" onclick="openCat('{{ path('ujm_category_new_pop') }}');"><i class="fa fa-plus"></i></a>
-                <a title="{{ 'drop category' | trans }}" id="linkedCategory" style="display: inline-block;" class="btn btn-primary" id="lien_category_drop" onclick="dropCategory();"><i class="fa fa-trash-o"></i></a>
+                <a title="{{ 'edit a category' | trans }}" id="editCategory" style="display: none;" class="btn btn-primary" onclick="openCat('{{ path('ujm_category_new_pop', {'edit': 1} ) }}');"><i class="fa fa-pencil"></i></a>
+                <a title="{{ 'drop category' | trans }}" id="linkedCategory" style="display: none;" class="btn btn-primary" id="lien_category_drop" onclick="dropCategory();"><i class="fa fa-trash-o"></i></a>
                 </div>
+                <div class="control-group">               
+                <a title="{{ 'create a new category' | trans }}" id="addCategory" data-toggle="collapse" data-target="#newCategoryDiv" class="btn btn-primary" onclick="openCat('{{ path('ujm_category_new_pop') }}');"><i class="fa fa-plus"></i></a>               
+                <div class="control-group collapse" id="newCategoryDiv">
+                <h3 class="panel-title">Nouvelle catégorie</h3>
+                <input class="form-control" type="text" required="required" id='category'/>
+                </div>
+               </div>
+           </div>
                 <div class="modal-footer">
                     <input type="hidden" value="{{ oldValueCat }}" id="oldValueCat" />
                     <button type="button" class="btn btn-default" data-dismiss="modal">{{ 'cancel'|trans({}, 'platform') }}</button>
                     <button type="submit" class="btn btn-primary" id="submit_category">{{ 'ok'|trans({}, 'platform') }}</button>
 
                 </div>
-           </div>
         </div>
     </div>
 </div>
