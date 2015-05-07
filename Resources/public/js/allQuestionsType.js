@@ -170,9 +170,14 @@ function addDelete(tr, deleteTrans) {
 
     // When click, delete the matching row in the table
     delLink.click(function(e) {
-        if(deleteTrans == 'newTableProposal' || deleteTrans == 'newTableLabel' ) {
-            replaceConnections();
+        if(deleteTrans == 'newTableProposal') {
+            replaceConnectionsDelete($(this).parent('td').parent('tr').children('td:last').attr('id'));
+        } else {
+            if(deleteTrans == 'newTableLabel'){
+                replaceConnectionsDelete($(this).parent('td').parent('tr').attr('id'));
+            }
         }
+
         $(this).parent('td').parent('tr').remove();
         e.preventDefault();
         return false;

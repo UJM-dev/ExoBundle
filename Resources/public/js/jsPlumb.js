@@ -68,22 +68,46 @@ function replaceConnections() {
     jsPlumb.detachEveryConnection();
     jsPlumb.unmakeEverySource();
     jsPlumb.unmakeEveryTarget();
+    $('body').find('div._jsPlumb_endpoint').each(function() {
+        $(this).remove();
+    });
     source();
     target();
     
     for(var i = 0; i < connections.length; i++) {
         jsPlumb.connect({
-            source:connections[i].sourceId,
+            source:  connections[i].sourceId,
             target: connections[i].targetId,
-            ConnectionsDetachable:false,
-            Connector: "Straight",
-            DropOptions: {tolerance:"touch"},
-            Endpoint: "Dot",
-            EndpointStyle: {fillStyle:"#777", radius: 5},
-            HoverPaintStyle: {strokeStyle:"red"},
-            LogEnabled: false,
-            PaintStyle: { strokeStyle:"#777", lineWidth: 4}
+            ConnectionsDetachable: false,
+                Connector: "Straight",
+                HoverPaintStyle: {strokeStyle:"red"},
+                LogEnabled: false
         });
+    }
+}
+
+function replaceConnectionsDelete(id) {
+    var connections = jsPlumb.getConnections();
+    // il ne faut pas enlever les endpoints
+    jsPlumb.detachEveryConnection();
+    jsPlumb.removeAllEndpoints();
+    jsPlumb.unmakeEverySource();
+    jsPlumb.unmakeEveryTarget();
+    source();
+    target();
+    
+    for(var i = 0; i < connections.length; i++) {
+        if(id != connections[i].sourceId && id != connections[i].targetId) {
+            alert("coucou");
+            jsPlumb.connect({
+                source: connections[i].sourceId,
+                target: connections[i].targetId,
+                ConnectionsDetachable: false,
+                Connector: "Straight",
+                HoverPaintStyle: {strokeStyle:"red"},
+                LogEnabled: false
+            });
+        }
     }
 }
 

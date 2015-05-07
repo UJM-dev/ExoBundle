@@ -223,6 +223,7 @@ function addLabel(container, deletechoice, table, codeContainer, edition) {
     whichChecked();
 
     responseBind();
+    replaceConnections();
 }
 
 function addProposal(container, deletechoice, table, codeContainer, edition) {
@@ -262,6 +263,7 @@ function addProposal(container, deletechoice, table, codeContainer, edition) {
     whichChecked();
 
     responseBind();
+    replaceConnections();
 }
 
 //check if the form is valid
@@ -505,7 +507,14 @@ function responseBind() {
     target();
 
     //defaults parameteres for all connections
-    defaultParameters();
+//    function defaultParameters2() {
+    jsPlumb.importDefaults({
+        ConnectionsDetachable: false,
+        Connector: "Straight",
+        HoverPaintStyle: {strokeStyle:"red"},
+        LogEnabled: false
+    });
+//}
 
     //if there are multiples same link
     multiplesLinks();
