@@ -173,9 +173,11 @@ function addFormHoleEdit(response, size, orthography, del, selector, source_imag
 }
 
 function createHole() {
-    var blank = $.trim(tinyMCE.activeEditor.selection.getContent({format : 'text'}));
-    blank = blank.replace(/\s{2,}/g, ' ');
-
+    var blank = $.trim(tinyMCE.get('ujm_exobundle_interactionholetype_html').selection.getContent({format : 'text'}));
+    blank = blank.replace(/\s{2,}/g, ' ');   
+    if (tinyMCE.isIE){
+        blank = tinyMCE.get('ujm_exobundle_interactionholetype_html').selection.getContent(tinyMCE.get('ujm_exobundle_interactionholetype_html').dom.select('p')[0]);       
+    }
     if (blank != '') {
 
         var nbHole = tinyMCE.activeEditor.dom.select('.blank').length;
