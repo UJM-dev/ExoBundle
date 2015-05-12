@@ -10,14 +10,13 @@ function target() {
     jsPlumb.makeTarget($(".droppable"), {
         anchor: "Left",
         cssClass: "endPoints",
-        isTarget: true        
+        isTarget: true
     });
 }
 
 function defaultParameters() {
     jsPlumb.importDefaults({
-//        anchor: [ "Perimeter", { parent } ],
-        ConnectionsDetachable:false,
+        ConnectionsDetachable: false,
         Connector: "Straight",
         DropOptions: {tolerance:"touch"},
         Endpoint: "Dot",
@@ -64,13 +63,9 @@ function removeConnections() {
 
 function replaceConnections() {
     var connections = jsPlumb.getConnections();
-    // il ne faut pas enlever les endpoints
     jsPlumb.detachEveryConnection();
     jsPlumb.unmakeEverySource();
     jsPlumb.unmakeEveryTarget();
-    $('body').find('div._jsPlumb_endpoint').each(function() {
-        $(this).remove();
-    });
     source();
     target();
     
@@ -79,18 +74,16 @@ function replaceConnections() {
             source:  connections[i].sourceId,
             target: connections[i].targetId,
             ConnectionsDetachable: false,
-                Connector: "Straight",
-                HoverPaintStyle: {strokeStyle:"red"},
-                LogEnabled: false
+            Connector: "Straight",
+            HoverPaintStyle: {strokeStyle:"red"},
+            LogEnabled: false
         });
     }
 }
 
 function replaceConnectionsDelete(id) {
     var connections = jsPlumb.getConnections();
-    // il ne faut pas enlever les endpoints
     jsPlumb.detachEveryConnection();
-    jsPlumb.removeAllEndpoints();
     jsPlumb.unmakeEverySource();
     jsPlumb.unmakeEveryTarget();
     source();
@@ -98,7 +91,6 @@ function replaceConnectionsDelete(id) {
     
     for(var i = 0; i < connections.length; i++) {
         if(id != connections[i].sourceId && id != connections[i].targetId) {
-            alert("coucou");
             jsPlumb.connect({
                 source: connections[i].sourceId,
                 target: connections[i].targetId,

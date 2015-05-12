@@ -65,6 +65,7 @@ function creationMatching(addchoice, addproposal, deletechoice, LabelValue, Scor
     }
 
     whichChange();
+    responseBind();
 }
 
 // Question edition
@@ -222,7 +223,7 @@ function addLabel(container, deletechoice, table, codeContainer, edition) {
 
     whichChecked();
 
-    responseBind();
+    target();
     replaceConnections();
 }
 
@@ -262,7 +263,7 @@ function addProposal(container, deletechoice, table, codeContainer, edition) {
 
     whichChecked();
 
-    responseBind();
+    source();
     replaceConnections();
 }
 
@@ -407,7 +408,7 @@ function tableCreationLabel(container, table, button, deletechoice, LabelValue, 
         add.click(function (e) {
             $('#newTableLabel').find('tbody').append('<tr class="droppable"></tr>');
             addLabel(container, deletechoice, table, codeContainer, edition);
-            replaceConnections();
+//            replaceConnections();
             e.preventDefault(); // prevent add # in the url
             return false;
         });
@@ -430,7 +431,7 @@ function tableCreationProposal(container, table, button, deletechoice, ProposalV
         add.click(function (e) {
             $('#newTableProposal').find('tbody').append('<tr></tr>');
             addProposal(container, deletechoice, table, codeContainer, edition);
-            replaceConnections();
+//            replaceConnections();
             e.preventDefault(); // prevent add # in the url
             return false;
         });
@@ -499,22 +500,24 @@ function setOrderLabel() {
 
 function responseBind() {
     jsPlumb.setContainer($("body"));
-
+    
     //Create all draggable in source.
     source();
 
     //Create all droppable in target
     target();
-
+    
     //defaults parameteres for all connections
-//    function defaultParameters2() {
     jsPlumb.importDefaults({
         ConnectionsDetachable: false,
         Connector: "Straight",
         HoverPaintStyle: {strokeStyle:"red"},
-        LogEnabled: false
+        LogEnabled: false,
+
+        DropOptions: {tolerance:"touch"},
+        Endpoint: "Dot",
+        PaintStyle: { strokeStyle:"#777", lineWidth: 4}
     });
-//}
 
     //if there are multiples same link
     multiplesLinks();

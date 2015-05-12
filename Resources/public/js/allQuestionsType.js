@@ -226,11 +226,21 @@ function advancedEdition(idTextarea,btnEdition,e){
     else{
             textarea=$("#"+idTextarea);
     }
-       textarea.addClass("claroline-tiny-mce hide");
-       textarea.data("data-theme","advanced");
-       $('#'+btnEdition).remove();
-       e.preventDefault();
-       return false;
+    textarea.addClass("claroline-tiny-mce hide");
+    textarea.data("data-theme","advanced");
+    $('#'+btnEdition).remove();
+    alert($("#"+idTextarea));
+    $("#"+idTextarea).load(function() {
+        alert("coucou");
+    });
+
+//    if(idTextarea.indexOf('interactionmatchingtype_proposals') || idTextarea.indexOf('interactionmatchingtype_labels')) {
+//        replaceConnections();
+//        $('#newTableLabel').find('tbody').append('<tr></tr>');
+//        $('#newTableLabel').find('tbody').find('tr:last').remove();
+//    }
+    e.preventDefault();
+    return false;
 }
 
 /**
