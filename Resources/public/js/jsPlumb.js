@@ -63,42 +63,46 @@ function removeConnections() {
 
 function replaceConnections() {
     var connections = jsPlumb.getConnections();
-    jsPlumb.detachEveryConnection();
-    jsPlumb.unmakeEverySource();
-    jsPlumb.unmakeEveryTarget();
-    source();
-    target();
-    
-    for(var i = 0; i < connections.length; i++) {
-        jsPlumb.connect({
-            source:  connections[i].sourceId,
-            target: connections[i].targetId,
-            ConnectionsDetachable: false,
-            Connector: "Straight",
-            HoverPaintStyle: {strokeStyle:"red"},
-            LogEnabled: false
-        });
-    }
-}
-
-function replaceConnectionsDelete(id) {
-    var connections = jsPlumb.getConnections();
-    jsPlumb.detachEveryConnection();
-    jsPlumb.unmakeEverySource();
-    jsPlumb.unmakeEveryTarget();
-    source();
-    target();
-    
-    for(var i = 0; i < connections.length; i++) {
-        if(id != connections[i].sourceId && id != connections[i].targetId) {
+    if(connections.length > 0){
+        jsPlumb.detachEveryConnection();
+        jsPlumb.unmakeEverySource();
+        jsPlumb.unmakeEveryTarget();
+        source();
+        target();
+        for(var i = 0; i < connections.length; i++) {
             jsPlumb.connect({
-                source: connections[i].sourceId,
+                source:  connections[i].sourceId,
                 target: connections[i].targetId,
                 ConnectionsDetachable: false,
                 Connector: "Straight",
                 HoverPaintStyle: {strokeStyle:"red"},
                 LogEnabled: false
             });
+        }
+    }
+}
+
+function replaceConnectionsDelete(id) {
+    var connections = jsPlumb.getConnections();
+    if(connections.length > 0){
+        jsPlumb.detachEveryConnection();
+        jsPlumb.unmakeEverySource();
+        jsPlumb.unmakeEveryTarget();
+        source();
+        target();
+
+        for(var i = 0; i < connections.length; i++) {
+            if(id != connections[i].sourceId || id != connections[i].targetId) {
+                alert("vroum tchoum");
+                jsPlumb.connect({
+                    source: connections[i].sourceId,
+                    target: connections[i].targetId,
+                    ConnectionsDetachable: false,
+                    Connector: "Straight",
+                    HoverPaintStyle: {strokeStyle:"red"},
+                    LogEnabled: false
+                });
+            }
         }
     }
 }

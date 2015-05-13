@@ -170,15 +170,15 @@ function addDelete(tr, deleteTrans) {
 
     // When click, delete the matching row in the table
     delLink.click(function(e) {
-        if(deleteTrans == 'newTableProposal') {
+        $(this).parent('td').parent('tr').remove();
+        
+         if(deleteTrans == 'newTableProposal') {
             replaceConnectionsDelete($(this).parent('td').parent('tr').children('td:last').attr('id'));
         } else {
             if(deleteTrans == 'newTableLabel'){
                 replaceConnectionsDelete($(this).parent('td').parent('tr').attr('id'));
             }
         }
-
-        $(this).parent('td').parent('tr').remove();
         e.preventDefault();
         return false;
     });
@@ -229,18 +229,22 @@ function advancedEdition(idTextarea,btnEdition,e){
     textarea.addClass("claroline-tiny-mce hide");
     textarea.data("data-theme","advanced");
     $('#'+btnEdition).remove();
-    alert($("#"+idTextarea));
-    $("#"+idTextarea).load(function() {
-        alert("coucou");
-    });
+    if(btnEdition.indexOf('interactionmatchingtype_proposals') || btnEdition.indexOf('interactionmatchingtype_labels')) {
+        test(idTextarea);
+        e.preventDefault();
+        return false;
+    }
+}
 
-//    if(idTextarea.indexOf('interactionmatchingtype_proposals') || idTextarea.indexOf('interactionmatchingtype_labels')) {
-//        replaceConnections();
-//        $('#newTableLabel').find('tbody').append('<tr></tr>');
-//        $('#newTableLabel').find('tbody').find('tr:last').remove();
-//    }
-    e.preventDefault();
-    return false;
+function test(idTextarea){
+        if($('#spanProposal_' + idTextarea).find("iframe").length == 1){
+            replaceConnections();
+            alert("coucou");
+        } else {
+            alert($('#spanProposal_' + idTextarea).find("iframe").length);
+            alert('#spanProposal_' + idTextarea);
+            setTimeout(test(idTextarea),'60');
+        }
 }
 
 /**
