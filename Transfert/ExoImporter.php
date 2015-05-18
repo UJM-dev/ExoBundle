@@ -63,6 +63,7 @@ class ExoImporter extends Importer implements ConfigurationInterface
         $rootPath = $this->getRootPath();
 
         $rootNode
+			->prototype('array')
             ->children()
                 ->arrayNode('file')
                     ->children()
@@ -70,6 +71,7 @@ class ExoImporter extends Importer implements ConfigurationInterface
                         ->scalarNode('version')->end()
                     ->end()
                 ->end()
+            ->end()
             ->end()
         ->end();
     }
@@ -115,8 +117,10 @@ class ExoImporter extends Importer implements ConfigurationInterface
 
     public function export(Workspace $workspace, array &$files, $object)
     {
+		$search = array(' ', '/');
+        $exoTitle = str_replace($search, '_', $object->getTitle());
         $qtiRepos = $this->container->get('ujm.qti_repository');
-        $qtiRepos->createDirQTI($object->getTitle(), $this->new);
+        $qtiRepos->createDirQTI($exoTitle, $this->new);
         $this->new = FALSE;
         $qtiServ = $this->container->get('ujm.qti_services');
 

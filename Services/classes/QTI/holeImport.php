@@ -150,7 +150,7 @@ class holeImport extends qtiImport
         foreach ($matches[0] as $matche) {
             if (substr($matche, 1, 5) == 'input') {
                 $tabMatche = explode('"', $matche);
-                $value = $tabMatche[13];
+                $value = $tabMatche[12];
                 $inputWithoutValue = str_replace('value="'.$value.'"', 'value=""', $matche);
                 $htmlWithoutValue = str_replace($matche, $inputWithoutValue, $htmlWithoutValue);
             }
