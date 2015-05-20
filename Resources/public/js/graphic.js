@@ -13,7 +13,7 @@ var value = 0; // Size of the resizing
 
 // Get the url's picture matching to the label in the list
 function sendData(select, path, prefx) {
-alert('ici');
+
     // Send the label of the picture to get the adress in order to display it
     $.ajax({
         type: 'POST',
