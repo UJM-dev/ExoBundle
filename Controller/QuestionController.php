@@ -2077,6 +2077,7 @@ class QuestionController extends Controller
      */
     public function duplicateAction ($interID, $exoID)
     {
+        $exercise = null;
         $interaction = $this->getDoctrine()
                             ->getManager()
                             ->getRepository('UJMExoBundle:Interaction')
@@ -2096,6 +2097,7 @@ class QuestionController extends Controller
                      ->isExerciseAdmin($exercise) === true) {
                 $allowToAccess = TRUE;
             }
+            $exercise = $em->getRepository('UJMExoBundle:Exercise')->find($exoID);
         }
         if (count($question) > 0 || count($sharedQuestion) > 0 || $allowToAccess === TRUE) {
 
@@ -2111,7 +2113,7 @@ class QuestionController extends Controller
                     $interXHandler = new \UJM\ExoBundle\Form\InteractionQCMHandler(
                         NULL , NULL, $this->getDoctrine()->getManager(),
                         $this->container->get('ujm.exercise_services'),
-                        $this->container->get('security.context')->getToken()->getUser(), $exoID,
+                        $this->container->get('security.context')->getToken()->getUser(), $exercise,
                         $this->get('translator') 
                     );
 
@@ -2127,7 +2129,7 @@ class QuestionController extends Controller
                     $interXHandler = new \UJM\ExoBundle\Form\InteractionGraphicHandler(
                         NULL , NULL, $this->getDoctrine()->getManager(),
                         $this->container->get('ujm.exercise_services'),
-                        $this->container->get('security.context')->getToken()->getUser(), $exoID,
+                        $this->container->get('security.context')->getToken()->getUser(), $exercise,
                         $this->get('translator') 
                     );
 
@@ -2143,7 +2145,7 @@ class QuestionController extends Controller
                     $interXHandler = new \UJM\ExoBundle\Form\InteractionHoleHandler(
                         NULL , NULL, $this->getDoctrine()->getManager(),
                         $this->container->get('ujm.exercise_services'),
-                        $this->container->get('security.context')->getToken()->getUser(), $exoID,
+                        $this->container->get('security.context')->getToken()->getUser(), $exercise,
                         $this->get('translator') 
                     );
 
@@ -2159,7 +2161,7 @@ class QuestionController extends Controller
                     $interXHandler = new \UJM\ExoBundle\Form\InteractionOpenHandler(
                         NULL , NULL, $this->getDoctrine()->getManager(),
                         $this->container->get('ujm.exercise_services'),
-                        $this->container->get('security.context')->getToken()->getUser(), $exoID,
+                        $this->container->get('security.context')->getToken()->getUser(), $exercise,
                         $this->get('translator') 
                     );
 
@@ -2174,7 +2176,7 @@ class QuestionController extends Controller
                     $interXHandler = new \UJM\ExoBundle\Form\InteractionMatchingHandler(
                         NULL , NULL, $this->getDoctrine()->getManager(),
                         $this->container->get('ujm.exercise_services'),
-                        $this->container->get('security.context')->getToken()->getUser(), $exoID,
+                        $this->container->get('security.context')->getToken()->getUser(), $exercise,
                         $this->get('translator') 
                     );
 
