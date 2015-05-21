@@ -249,8 +249,7 @@ class InteractionGraphicHandler extends \UJM\ExoBundle\Form\InteractionHandler
         // Recover the color of an answer zone thanks to its src
         $temp = strrpos($url, '.') - 1;
         $chain = substr($url, $temp, 1);
-        var_dump($chain);
-        die();
+  
         switch ($chain) {
             case "w" :
                 return "white";
