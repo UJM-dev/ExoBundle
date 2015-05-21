@@ -31,8 +31,8 @@ class matchingImport extends qtiImport {
         $this->createQuestion();
         $this->createInteraction();
         $this->interaction->setType('InteractionMatching');
-        $this->doctrine->getManager()->persist($this->interaction);
-        $this->doctrine->getManager()->flush();
+        $this->om->persist($this->interaction);
+        $this->om->flush();
         $this->createInteractionMatching();
 
         return $this->interactionMatching;
@@ -73,15 +73,15 @@ class matchingImport extends qtiImport {
         //for recording the type of the question
         $this->matchingType();
         $this->getShuffle();
-        $this->doctrine->getManager()->persist($this->interactionMatching);
-        $this->doctrine->getManager()->flush();
+        $this->om->persist($this->interactionMatching);
+        $this->om->flush();
         $this->createLabels();
         $this->createProposals();
     }
-    
+
     /**
      * Get shuffle
-     * 
+     *
      * @access protected
      */
     protected function getShuffle() {
@@ -93,8 +93,8 @@ class matchingImport extends qtiImport {
         } else {
             $this->interactionMatching->setShuffle(false);
         }
-        $this->doctrine->getManager()->persist($this->interactionMatching);
-        $this->doctrine->getManager()->flush();
+        $this->om->persist($this->interactionMatching);
+        $this->om->flush();
     }
 
     /**
@@ -116,16 +116,16 @@ class matchingImport extends qtiImport {
             $label->setScoreRightResponse($this->notation($identifiant));
             $label->setInteractionMatching($this->interactionMatching);
             $label->setOrdre($ordre);
-            
+
            if ($simpleLabel->hasAttribute("fixed") && $simpleLabel->getAttribute("fixed") == 'true') {
                 $label->setPositionForce(true);
             } else {
                 $label->setPositionForce(false);
             }
-            
+
             //recording in the DBB
-            $this->doctrine->getManager()->persist($label);
-            $this->doctrine->getManager()->flush();
+            $this->om->persist($label);
+            $this->om->flush();
             $this->associatedLabels[$identifiant] = $label;
             $ordre++;
         }
@@ -149,17 +149,17 @@ class matchingImport extends qtiImport {
             $proposal = new Proposal();
             $proposal->setValue($this->value($simpleProposal));
             $proposal->setOrdre($ordre);
-            
+
             if ($simpleProposal->hasAttribute("fixed") && $simpleProposal->getAttribute("fixed") == 'true') {
                 $proposal->setPositionForce(true);
             } else {
                 $proposal->setPositionForce(false);
             }
-            
+
             $identifiant = $simpleProposal->getAttribute("identifier");
             $proposal->setInteractionMatching($this->interactionMatching);
-            $this->doctrine->getManager()->persist($proposal);
-            $this->doctrine->getManager()->flush();
+            $this->om->persist($proposal);
+            $this->om->flush();
             $rightLabel = 0;
             //compare all relations to the proposal selected
             foreach ($allRelations as $relation) {
@@ -174,8 +174,8 @@ class matchingImport extends qtiImport {
                 if ($key == $rightLabel) {
                     $proposal->addAssociatedLabel($label);
                     $proposal->setInteractionMatching($this->interactionMatching);
-                    $this->doctrine->getManager()->persist($proposal);
-                    $this->doctrine->getManager()->flush();
+                    $this->om->persist($proposal);
+                    $this->om->flush();
                 }
             }
             $ordre++;
@@ -249,15 +249,13 @@ class matchingImport extends qtiImport {
         $ri = $this->assessmentItem->getElementsByTagName("responseDeclaration")->item(0);
         if ($ri->hasAttribute("cardinality") && $ri->getAttribute("cardinality") == 'single') {
             //type : to drag
-            $type = $this->doctrine
-                ->getManager()
+            $type = $this->om
                 ->getRepository('UJMExoBundle:TypeMatching')
                 ->findOneBy(array('code' => 2));
             $this->interactionMatching->setTypeMatching($type);
         } else {
             //type : to bind
-            $type = $this->doctrine
-                ->getManager()
+            $type = $this->om
                 ->getRepository('UJMExoBundle:TypeMatching')
                 ->findOneBy(array('code' => 1));
             $this->interactionMatching->setTypeMatching($type);

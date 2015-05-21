@@ -55,14 +55,14 @@ class qtiRepository {
      */
     public function createDirQTI($directory = 'default', $clear = TRUE)
     {
-        $this->userRootDir = './uploads/ujmexo/qti/'.$this->user->getUsername().'/';
+        $this->userRootDir = $this->container->getParameter('ujm.param.exo_directory') . '/qti/'.$this->user->getUsername().'/';
         $this->userDir = $this->userRootDir.$directory.'/';
 
-        if (!is_dir('./uploads/ujmexo/')) {
-            mkdir('./uploads/ujmexo/');
+        if (!is_dir($this->container->getParameter('ujm.param.exo_directory'))) {
+            mkdir($this->container->getParameter('ujm.param.exo_directory'));
         }
-        if (!is_dir('./uploads/ujmexo/qti/')) {
-            mkdir('./uploads/ujmexo/qti/');
+        if (!is_dir($this->container->getParameter('ujm.param.exo_directory') . '/qti/')) {
+            mkdir($this->container->getParameter('ujm.param.exo_directory') . '/qti/');
         }
         if (!is_dir($this->userRootDir)) {
             mkdir($this->userRootDir);
