@@ -214,7 +214,7 @@ inValidMark: Note invalide
 
 # I Intraction type (data in the DB)
 InteractionGraphic: Graphique
-InteractionHole: Blanc
+InteractionHole: Texte à trous
 InteractionMatching: Association
 InteractionOpen: Ouverte
 InteractionQCM: QCM
@@ -222,6 +222,7 @@ InteractionQCM: QCM
 
 # K
 key word: Mot clé
+keys words: Mots clés
 kind of question: Quel type de question
 
 # L
@@ -497,7 +498,7 @@ Inter_Hole.orthography: Autoriser les fautes d'orthographe
 Inter_Hole.score: Point
 Inter_Hole.size: Taille
 
-Label.value : Valeur
+Label.value : Label
 Label.scoreRight: Score de l'association
 Label.positionForce: Forcer cette position
 
@@ -511,7 +512,7 @@ Planning.end_time: Date de fin
 Planning.start_time: Date de début
 Points: Points
 
-Proposal.value: Réponse
+Proposal.value: Proposition
 Proposal.positionForce: Forcer cette position
 
 Question_creation: Création d'une question
@@ -555,5 +556,6 @@ ujm_exobundle_interactionqcmtype_interaction_hints: Indices
 
 ujm_exobundle_categorytype_value: Nom de la nouvelle catégorie
 
-WordResponse.score: Point attribués à cette réponse
+WordResonse.caseSensitive: Respecter la casse
+WordResponse.score: Points attribués à cette réponse
 WordResponse.response_value: Mot

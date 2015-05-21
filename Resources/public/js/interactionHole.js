@@ -21,11 +21,11 @@ function addFormHole( response, size, orthography, del, selector, source_image_a
     langPoint   = wlangPoint;
     langDel     = '<i class="fa fa-close"></i>';
 
-    tableHoles.append('<table id="newTable" class="table table-striped table table-condensed"><thead id="Entete"><tr><th >' + size + '</th><th >' + orthography + '</th><th >' + selector + '</th><th >' + response + '</th><th >' + del + '</th></tr></thead><tbody></tbody></table>');
-    $('tbody').sortable();  
-    
+    tableHoles.append('<table id="newTable" class="table table-striped table table-condensed"><thead id="Entete"><tr><th >' + size + '</th><th style="display:none;">' + orthography + '</th><th >' + selector + '</th><th >' + response + '</th><th >' + del + '</th></tr></thead><tbody></tbody></table>');
+    $('tbody').sortable();
+
     $('#newTable').css({"display" : "none"});
-    
+
 
 }
 
@@ -37,9 +37,9 @@ function addFormHoleEdit(response, size, orthography, del, selector, source_imag
     var i = 0;
 
     if (nbResponses == 0) {
-        tableHoles.append('<table id="newTable" class="table table-striped table-bordered table-condensed"><thead><tr style="background-color: lightsteelblue;"><th class="classic">' + size + '</th><th class="classic">' + orthography + '</th><th class="classic">' + selector + '</th><th class="classic">' + response + '</th><th class="classic">' + del + '</th></tr></thead><tbody class="bodyHole"></tbody></table>');
+        tableHoles.append('<table id="newTable" class="table table-striped table-bordered table-condensed"><thead><tr style="background-color: lightsteelblue;"><th class="classic">' + size + '</th><th class="classic" style="display:none;">' + orthography + '</th><th class="classic">' + selector + '</th><th class="classic">' + response + '</th><th class="classic">' + del + '</th></tr></thead><tbody class="bodyHole"></tbody></table>');
     } else {
-        tableHoles.append('<table id="newTable" class="table table-striped table-bordered table-condensed"><thead><tr style="background-color: lightsteelblue;"><th class="classic">' + size + '</th><th class="classic">' + orthography + '</th><th class="classic">' + selector + '</th><th class="classic">' + response + '</th></tr></thead><tbody class="bodyHole"></tbody></table>');
+        tableHoles.append('<table id="newTable" class="table table-striped table-bordered table-condensed"><thead><tr style="background-color: lightsteelblue;"><th class="classic">' + size + '</th><th class="classic" style="display:none;">' + orthography + '</th><th class="classic">' + selector + '</th><th class="classic">' + response + '</th></tr></thead><tbody class="bodyHole"></tbody></table>');
     }
     $('tbody').sortable();
 
@@ -53,8 +53,14 @@ function addFormHoleEdit(response, size, orthography, del, selector, source_imag
          $(this).find('.row').each(function () {
 
             if ($(this).find('input').length) {
+                //not yet implemented so don't create
+             if ($(this).find('input').attr("id").indexOf('orthography') == -1) {
                 $('#newTable').find('tr:last').append('<td class="classic"></td>');
                 $('#newTable').find('td:last').append($(this).find('input'));
+            } else {
+                $('#newTable').find('tr:last').append('<td class="classic" style="display:none;"></td>');
+                $('#newTable').find('td:last').append($(this).find('input'));
+            }
             }
 
         });
@@ -85,9 +91,10 @@ function addFormHoleEdit(response, size, orthography, del, selector, source_imag
         });
 
         $('#newTable').find('.trHole:last').find('td:last').find('input').each(function () {
+            //i = nb input found, 3 input per row (response, point, caseSensitive)
             if (i == 0) {
                 $('#tabWR_'+index).find('tbody').append('<tr class="trWR"></tr>');
-            } else if (i>1) {
+            } else if (i > 2) {
                 i = 0;
                 $('#tabWR_'+index).find('tbody').append('<tr class="trWR"></tr>');
             }
@@ -97,7 +104,7 @@ function addFormHoleEdit(response, size, orthography, del, selector, source_imag
             i++;
 
             //add buton delete for a key word
-            if ( (nbResponses == 0) && (i>1) && ($('#tabWR_' + index).find('.trWR').length > 1)) {
+            if ( (nbResponses == 0) && (i > 2) && ($('#tabWR_' + index).find('.trWR').length > 1)) {
                 $('#tabWR_' + index).find('tr:last').append('<td class="classic"></td>');
                 $('#tabWR_' + index).find('td:last').append(
                     '<a id="wr_' + index + '_' + $('#tabWR_' + index).find('.trWR').length + '" href="#" class="btn btn-default"><i style="color : red" class="fa fa-trash-o"></i></a>'
@@ -224,8 +231,14 @@ function addHole(indexBlank, valHole) {
 
     container.find('.row').each(function () {
         if ($(this).find('input').length) {
-            $('#newTable').find('tr:last').append('<td class="classic"></td>');
-            $('#newTable').find('td:last').append($(this).find('input'));
+            //not yet implemented so don't create
+             if ($(this).find('input').attr("id").indexOf('orthography') == -1) {
+                $('#newTable').find('tr:last').append('<td class="classic"></td>');
+                $('#newTable').find('td:last').append($(this).find('input'));
+            } else {
+                $('#newTable').find('tr:last').append('<td class="classic" style="display:none;"></td>');
+                $('#newTable').find('td:last').append($(this).find('input'));
+            }
         }
     });
 
@@ -244,7 +257,7 @@ function addHole(indexBlank, valHole) {
 
     $('#ujm_exobundle_interactionholetype_holes_' + index + '_wordResponses_0_response').val(valHole);
     //$('#ujm_exobundle_interactionholetype_holes_'+index+'_wordResponses_0_response').attr("readonly", true);
-    $('#ujm_exobundle_interactionholetype_holes_' + index + '_wordResponses_0_score').attr("placeholder", langPoint);
+    //$('#ujm_exobundle_interactionholetype_holes_' + index + '_wordResponses_0_score').attr("placeholder", langPoint);
 
     // Remove the useless fileds form
     containerWR.remove();
@@ -299,7 +312,7 @@ function addHole(indexBlank, valHole) {
 
     changeSize(index, index);
     disableNotYetReady();
-    
+
     if (($('#newTable').find('td').length) > 1) {
         $('#newTable').css({"display" : "block"});
     } else {
@@ -357,7 +370,7 @@ function addWR(indexHole, idTabWR) {
     }
 
     $('#ujm_exobundle_interactionholetype_holes_' + indexHole + '_wordResponses_' + indexWR + '_response').attr("placeholder", langKeyWord);
-    $('#ujm_exobundle_interactionholetype_holes_' + indexHole + '_wordResponses_' + indexWR + '_score').attr("placeholder", langPoint);
+    //$('#ujm_exobundle_interactionholetype_holes_' + indexHole + '_wordResponses_' + indexWR + '_score').attr("placeholder", langPoint);
 
     $('#ujm_exobundle_interactionholetype_holes_' + indexHole + '_wordResponses_' + indexWR + '_response').focusout(function() {
         $(this).val($.trim($(this).val()));
@@ -429,7 +442,8 @@ $(document).ready(function() {
 function disableNotYetReady() {
     $('#newTable').find(('.trHole')).each(function () {
         //$(this).find('input').eq(1).attr("readonly", true);
-        $(this).find('input').eq(2).attr("disabled", true);
+//        $(this).find('input').eq(2).attr("disabled", true);
+        $(this).find('input').eq(2).attr("style", "display:none;");
     });
 }
 //*******************

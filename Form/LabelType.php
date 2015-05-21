@@ -4,7 +4,7 @@ namespace UJM\ExoBundle\Form;
 
 use Symfony\Component\Form\AbstractType;
 use Symfony\Component\Form\FormBuilderInterface;
-use Symfony\Component\OptionsResolver\OptionsResolverInterface;
+use Symfony\Component\OptionsResolver\OptionsResolver;
 
 class LabelType extends AbstractType
 {
@@ -30,15 +30,15 @@ class LabelType extends AbstractType
                     'label' => ' ', 'attr' => array('class' => 'labelScore', 'placeholder' => 'points'
                   )))
                 //add a field for correspondance, and will be replace by the our field
-//            ->add( "correspondance", "choice", array("mapped"=>false)
-//                  )
+            ->add( "correspondance", "choice", array("mapped"=>false)
+                  )
             ->add(
                 'positionForce', 'checkbox', array(
                     'required' => false, 'label' => ' '
                 ));
     }
 
-    public function setDefaultOptions(OptionsResolverInterface $resolver)
+    public function configureOptions(OptionsResolver $resolver)
     {
         $resolver->setDefaults(
             array(

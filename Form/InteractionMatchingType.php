@@ -4,7 +4,7 @@ namespace UJM\ExoBundle\Form;
 
 use Symfony\Component\Form\AbstractType;
 use Symfony\Component\Form\FormBuilderInterface;
-use Symfony\Component\OptionsResolver\OptionsResolverInterface;
+use Symfony\Component\OptionsResolver\OptionsResolver;
 
 use Claroline\CoreBundle\Entity\User;
 
@@ -38,7 +38,8 @@ class InteractionMatchingType extends AbstractType
             ->add(
                 'typeMatching', 'entity', array(
                     'class' => 'UJM\\ExoBundle\\Entity\\TypeMatching',
-                    'label' => 'TypeMatching.value'
+                    'label' => 'TypeMatching.value',
+                    'choice_translation_domain' => true
                 )
             );
         $builder
@@ -61,7 +62,7 @@ class InteractionMatchingType extends AbstractType
             );
     }
 
-    public function setDefaultOptions(OptionsResolverInterface $resolver)
+    public function configureOptions(OptionsResolver $resolver)
     {
         $resolver->setDefaults(
             array(

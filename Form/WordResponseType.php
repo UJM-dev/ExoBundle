@@ -4,7 +4,7 @@ namespace UJM\ExoBundle\Form;
 
 use Symfony\Component\Form\AbstractType;
 use Symfony\Component\Form\FormBuilderInterface;
-use Symfony\Component\OptionsResolver\OptionsResolverInterface;
+use Symfony\Component\OptionsResolver\OptionsResolver;
 
 class WordResponseType extends AbstractType
 {
@@ -12,13 +12,19 @@ class WordResponseType extends AbstractType
     {
         $builder
             ->add('response', 'text')
-            ->add('score', 'text',array('attr' => array('class'=>'col-md-1')))
+            ->add('score', 'text', array('attr' => array('class'=>'col-md-1', 'placeholder'=>'point')))
+            ->add(
+                'caseSensitive', 'checkbox', array(
+                    'required' => false,
+                    'attr' => array('title' => 'WordResonse.caseSensitive')
+                )
+            )
             //->add('interactionopen')
             //->add('hole')
         ;
     }
 
-    public function setDefaultOptions(OptionsResolverInterface $resolver)
+    public function configureOptions(OptionsResolver $resolver)
     {
         $resolver->setDefaults(array(
             'data_class' => 'UJM\ExoBundle\Entity\WordResponse',

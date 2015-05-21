@@ -85,6 +85,12 @@ class holeImport extends qtiImport
             if (substr($matche, 1, 20) == 'textEntryInteraction') {
                 $expectedLength = $tabMatche[3];
                 $text = str_replace('textEntryInteraction', 'input', $matche);
+                /*For old questions with holes */
+                $text = preg_replace('(name=".*?")', '', $text);
+                if (isset($tabMatche[5])) {
+                    $text = str_replace('size="'.$tabMatche[5].'"', 'size="'.$tabMatche[5].'" type="text" value="'.$correctResponse.'"', $text);
+                }
+                /******************************/
                 $text = str_replace('responseIdentifier="'.$responseIdentifier.'"', 'id="'.$newId.'" class="blank" autocomplete="off" name="blank_'.$newId.'"', $text);
                 $text = str_replace('expectedLength="'.$expectedLength.'"', 'size="'.$expectedLength.'" type="text" value="'.$correctResponse.'"', $text);
                 $this->createHole($expectedLength, $responseIdentifier, false, $newId);
@@ -257,6 +263,11 @@ class holeImport extends qtiImport
             $keyWord->setResponse($mapEntry->getAttribute('mapKey'));
             $keyWord->setScore($mapEntry->getAttribute('mappedValue'));
             $keyWord->setHole($hole);
+            if ($mapEntry->getAttribute('caseSensitive') == true) {
+                $keyWord->setCaseSensitive(true);
+            } else {
+                $keyWord->setCaseSensitive(false);
+            }
             $this->doctrine->getManager()->persist($keyWord);
         }
     }
@@ -285,6 +296,11 @@ class holeImport extends qtiImport
                         if ($mapEntry->getAttribute('mapKey') == $ic->getAttribute('identifier')) {
                             $score = $mapEntry->getAttribute('mappedValue');
                             $matchScore = true;
+                        }
+                        if ($mapEntry->getAttribute('caseSensitive') == true) {
+                            $keyWord->setCaseSensitive(true);
+                        } else {
+                            $keyWord->setCaseSensitive(false);
                         }
                     }
                     if ($matchScore === false) {
