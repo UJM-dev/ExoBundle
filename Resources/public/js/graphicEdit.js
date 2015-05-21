@@ -49,10 +49,6 @@ function position(shape, color, i, prefix, value, size, points) {
         case 'yellow' :
             $('#img' + i).attr('src', prefix + 'circley.png');
             break;
-        
-        case 'gray' :
-            $('#img' + i).attr('src', prefix + 'circlegray.png');
-            break;
             
         case 'brown' :
             $('#img' + i).attr('src', prefix + 'circlebrown.png');
@@ -95,10 +91,6 @@ function position(shape, color, i, prefix, value, size, points) {
 
         case 'yellow' :
             $('#img' + i).attr('src', prefix + 'squarey.png');
-            break;
-        
-        case 'gray' :
-            $('#img' + i).attr('src', prefix + 'circlegray.png');
             break;
             
         case 'brown' :
@@ -204,9 +196,6 @@ function alreadyPlacedAnswersZoneEdit(shape, color, pathImg, point) {
     } else if (color == 'yellow') {
         contenu += '<select class="form-control" id="color' + grade + '" size="1" style="background-color : #FFEB00" \n\
                         onchange="alterAlreadyPlaced(\'' + pathImg + '\', this);">';
-    } else if (color == 'gray') {
-         contenu += '<select class="form-control" id="color' + grade + '" size="1" style="background-color : #575759" \n\
-                        onchange="alterAlreadyPlaced(\'' + pathImg + '\', this);">';
     } else if (color == 'brown') {
          contenu += '<select class="form-control" id="color' + grade + '" size="1" style="background-color : #5A4C41" \n\
                         onchange="alterAlreadyPlaced(\'' + pathImg + '\', this);">';
@@ -224,7 +213,6 @@ function alreadyPlacedAnswersZoneEdit(shape, color, pathImg, point) {
                 <option value="green"  style="background-color:#118E3F;"> &nbsp;&nbsp;&nbsp; </option>\n\
                 <option value="orange" style="background-color:#C95226;"> &nbsp;&nbsp;&nbsp; </option>\n\
                 <option value="yellow" style="background-color:#FFEB00;"> &nbsp;&nbsp;&nbsp; </option>\n\
-                <option value="gray"    style="background-color:#575759;"> &nbsp;&nbsp;&nbsp; </option>\n\
                 <option value="brown"    style="background-color:#5A4C41;"> &nbsp;&nbsp;&nbsp; </option>\n\
             </select></td>';
 
