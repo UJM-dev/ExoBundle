@@ -14,10 +14,11 @@ use Symfony\Component\Security\Core\SecurityContextInterface;
 use UJM\ExoBundle\Entity\Category;
 use UJM\ExoBundle\Entity\Interaction;
 use UJM\ExoBundle\Entity\Question;
+use Claroline\CoreBundle\Persistence\ObjectManager;
 
 abstract class qtiImport
 {
-    protected $doctrine;
+    protected $om;
     protected $securityContext;
     protected $container;
     protected $user;
@@ -33,14 +34,14 @@ abstract class qtiImport
      *
      * @access public
      *
-     * @param \Doctrine\Bundle\DoctrineBundle\Registry $doctrine Dependency Injection
+     * @param \Claroline\CoreBundle\Persistence\ObjectManager
      * @param \Symfony\Component\Security\Core\SecurityContextInterface $securityContext Dependency Injection
      * @param \Symfony\Component\DependencyInjection\Container $container
      *
      */
-    public function __construct(Registry $doctrine, SecurityContextInterface $securityContext, $container)
+    public function __construct(ObjectManager $om, SecurityContextInterface $securityContext, $container)
     {
-        $this->doctrine        = $doctrine;
+        $this->om              = $om;
         $this->securityContext = $securityContext;
         $this->container       = $container;
         $this->user            = $this->securityContext->getToken()->getUser();
@@ -61,8 +62,8 @@ abstract class qtiImport
         $this->question->setUser($this->user);
         $this->question->setCategory($this->qtiCat);
         $this->getDescription();
-        $this->doctrine->getManager()->persist($this->question);
-        $this->doctrine->getManager()->flush();
+        $this->om->persist($this->question);
+        $this->om->flush();
     }
 
     /**
@@ -79,8 +80,8 @@ abstract class qtiImport
         if ($this->interaction->getInvite() == '' && $this->question->getDescription() != '') {
             $this->interaction->setInvite($this->question->getDescription());
             $this->question->setDescription('');
-            $this->doctrine->getManager()->persist($this->question);
-            $this->doctrine->getManager()->flush();
+            $this->om->persist($this->question);
+            $this->om->flush();
         }
         if ($feedback != null) {
             $this->interaction->setFeedBack($feedback);
@@ -100,8 +101,8 @@ abstract class qtiImport
         $this->qtiCat->setValue("QTI");
         $this->qtiCat->setUser($this->user);
         $this->qtiCat->setLocker(false);
-        $this->doctrine->getManager()->persist($this->qtiCat);
-        $this->doctrine->getManager()->flush();
+        $this->om->persist($this->qtiCat);
+        $this->om->flush();
     }
 
     /**
@@ -112,8 +113,7 @@ abstract class qtiImport
      */
     protected function getQTICategory()
     {
-        $this->qtiCat = $this->doctrine
-                             ->getManager()
+        $this->qtiCat = $this->om
                              ->getRepository('UJMExoBundle:Category')
                              ->findOneBy(array('value' => 'QTI',
                                                'user' => $this->user->getId()));
@@ -326,7 +326,7 @@ abstract class qtiImport
     private function createDirQTIImport($ws)
     {
         $manager = $this->container->get('claroline.manager.resource_manager');
-        $parent = $this->doctrine
+        $parent = $this->om
                        ->getRepository('ClarolineCoreBundle:Resource\ResourceNode')
                        ->findWorkspaceRoot($ws);
         $dir = new Directory();
@@ -351,7 +351,7 @@ abstract class qtiImport
      */
     private function getDirQTIImport($ws)
     {
-        $this->dirQTI = $this->doctrine->getManager()
+        $this->dirQTI = $this->om
                              ->getRepository('ClarolineCoreBundle:Resource\ResourceNode')
                              ->findOneBy(array('workspace' => $ws, 'name' => 'QTI_SYS'));
 

@@ -198,13 +198,13 @@ class QtiController extends Controller {
                foreach ($iterator as $element) {
                    if (!$element->isDot() && $element->isFile() && $element->getExtension() != "xml") {
                        $path = $element->getPath();
-                       $partDirectory = str_replace('./uploads/ujmexo/qti/'.$userName.'/'.$title.'/questions/questionDoc_','', $path);
+                       $partDirectory = str_replace($this->container->getParameter('ujm.param.exo_directory') . '/qti/'.$userName.'/'.$title.'/questions/questionDoc_','', $path);
 
                        $zip->addFile($element->getPathname(), $title.'/question_'.$partDirectory.'/'.$element->getFilename());
                    }
                    if (!$element->isDot() && $element->isFile() && $element->getExtension() == "xml") {
                        $path = $element->getPath();
-                       $partDirectory = str_replace('./uploads/ujmexo/qti/'.$userName.'/'.$title.'/questions/question_','', $path);
+                       $partDirectory = str_replace($this->container->getParameter('ujm.param.exo_directory') . '/qti/'.$userName.'/'.$title.'/questions/question_','', $path);
                        $zip->addFile($element->getPathname(), $title.'/question_'.$partDirectory.'/question_'.$partDirectory.'.'.$element->getExtension());
                    }
                }
