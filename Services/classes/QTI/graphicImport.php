@@ -98,7 +98,7 @@ class graphicImport extends qtiImport {
     protected function createPicture($objectTag) {
 
         $user    = $this->container->get('security.context')->getToken()->getUser();
-        $userDir = './uploads/ujmexo/users_documents/'.$user->getUsername();
+        $userDir = $this->container->getParameter('ujm.param.exo_directory') . '/users_documents/'.$user->getUsername();
         $picName = $this->cpPicture($objectTag->getAttribute('data'), $userDir);
 
         $document = new Document();
@@ -127,11 +127,11 @@ class graphicImport extends qtiImport {
     protected function cpPicture($picture, $userDir) {
         $src = $this->qtiRepos->getUserDir().'/'.$picture;
 
-        if (!is_dir('./uploads/ujmexo/')) {
-            mkdir('./uploads/ujmexo/');
+        if (!is_dir($this->container->getParameter('ujm.param.exo_directory'))) {
+            mkdir($this->container->getParameter('ujm.param.exo_directory'));
         }
-        if (!is_dir('./uploads/ujmexo/users_documents/')) {
-            mkdir('./uploads/ujmexo/users_documents/');
+        if (!is_dir($this->container->getParameter('ujm.param.exo_directory') . '/users_documents/')) {
+            mkdir($this->container->getParameter('ujm.param.exo_directory') . '/users_documents/');
         }
 
         if (!is_dir($userDir)) {
