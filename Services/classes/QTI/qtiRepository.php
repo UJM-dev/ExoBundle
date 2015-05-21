@@ -336,12 +336,13 @@ class qtiRepository {
     private function addQuestionInExercise($interX)
     {
         $exoServ = $this->container->get('ujm.exercise_services');
+        $exoServ->setExerciseQuestion($this->exercise, $interX);
 
-        // for differenciate import one question in an exercice or if import a workspace
-        if (is_numeric($this->exercise)) {
-            $exoServ->setExerciseQuestion($this->exercise, $interX);
-        } else {
-            $exoServ->setExerciseQuestion($this->exercise->getId(), $interX);
-        }
+//        // for differenciate import one question in an exercice or if import a workspace
+//        if (is_numeric($this->exercise)) {
+//            $exoServ->setExerciseQuestion($this->exercise, $interX);
+//        } else {
+//            $exoServ->setExerciseQuestion($this->exercise->getId(), $interX);
+//        }
     }
 }

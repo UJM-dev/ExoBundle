@@ -1009,17 +1009,17 @@ class exerciseServices
      *
      * @access public
      *
-     * @param integer $exercise id Exercise
+     * @param UJM\ExoBundle\Entity\Exercise $exercise instance of Exercise
      * @param InteractionQCM or InteractionGraphic or ... $interX
      *
      */
     public function setExerciseQuestion($exercise, $interX)
     {
-        $exo = $this->doctrine->getManager()->getRepository('UJMExoBundle:Exercise')->find($exercise);
-        $eq = new ExerciseQuestion($exo, $interX->getInteraction()->getQuestion());
+        //$exo = $this->doctrine->getManager()->getRepository('UJMExoBundle:Exercise')->find($exercise);
+        $eq = new ExerciseQuestion($exercise, $interX->getInteraction()->getQuestion());
 
         $dql = 'SELECT max(eq.ordre) FROM UJM\ExoBundle\Entity\ExerciseQuestion eq '
-              . 'WHERE eq.exercise='.$exercise;
+              . 'WHERE eq.exercise='.$exercise->getId();
         $query = $this->doctrine->getManager()->createQuery($dql);
         $maxOrdre = $query->getResult();
 
@@ -1048,7 +1048,7 @@ class exerciseServices
      *
      * @access public
      *
-     * @param \UJM\ExoBundle\Entity\Paper\Exercise $exercise
+     * @param \UJM\ExoBundle\Entity\Exercise $exercise
      *
      * Return boolean
      */
@@ -1216,7 +1216,7 @@ class exerciseServices
 
         return $linkedCategory;
     }
-    
+
     /**
      * To control the max attemps, allow to know if an user can again execute an exercise
      *
@@ -1730,15 +1730,14 @@ class exerciseServices
      * @access public
      *
      * @param type $inter
-     * @param type $exerciceID
+     * @param UJM\ExoBundle\Entity\Exercise $exercise instance of Exercise
      * @param Doctrine EntityManager $em
      */
-    public function addQuestionInExercise($inter, $exerciceID, $em) {
-        if ($exerciceID != -1) {
-            $exercise = $em->find($exerciceID);
+    public function addQuestionInExercise($inter, $exercise, $em) {
+        if ($exercise != null) {
 
             if ($this->isExerciseAdmin($exercise)) {
-                $this->setExerciseQuestion($exerciceID, $inter);
+                $this->setExerciseQuestion($exercise, $inter);
             }
         }
     }

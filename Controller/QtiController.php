@@ -35,7 +35,9 @@ class QtiController extends Controller {
             $scanFile = $qtiRepos->scanFiles();
 
         } else {
-            $scanFile = $qtiRepos->scanFilesToImport($exoID);
+            $em = $this->getDoctrine()->getManager();
+            $exercise = $em->getRepository('UJMExoBundle:Exercise')->find($exoID);
+            $scanFile = $qtiRepos->scanFilesToImport($exercise);
 
         }
 
@@ -188,7 +190,7 @@ class QtiController extends Controller {
 
        $zip = new \ZipArchive();
        $zip->open($tmpFileName, \ZipArchive::CREATE);
-       
+
        $userName = $this->container->get('security.context')->getToken()->getUser()->getUserName();
 
        foreach ($qdirs as $dir) {
@@ -214,7 +216,7 @@ class QtiController extends Controller {
 
        return $response;
     }
-    
+
     /**
      * Export an existing Question in QTI.
      *
