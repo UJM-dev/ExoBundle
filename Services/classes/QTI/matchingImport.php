@@ -32,7 +32,7 @@ class matchingImport extends qtiImport {
         $this->createInteraction();
         $this->interaction->setType('InteractionMatching');
         $this->om->persist($this->interaction);
-        $this->om->flush();
+        $this->om->forceFlush();
         $this->createInteractionMatching();
 
         return $this->interactionMatching;
@@ -74,7 +74,7 @@ class matchingImport extends qtiImport {
         $this->matchingType();
         $this->getShuffle();
         $this->om->persist($this->interactionMatching);
-        $this->om->flush();
+        $this->om->forceFlush();
         $this->createLabels();
         $this->createProposals();
     }
@@ -94,7 +94,7 @@ class matchingImport extends qtiImport {
             $this->interactionMatching->setShuffle(false);
         }
         $this->om->persist($this->interactionMatching);
-        $this->om->flush();
+        $this->om->forceFlush();
     }
 
     /**
@@ -125,7 +125,7 @@ class matchingImport extends qtiImport {
 
             //recording in the DBB
             $this->om->persist($label);
-            $this->om->flush();
+            $this->om->forceFlush();
             $this->associatedLabels[$identifiant] = $label;
             $ordre++;
         }
@@ -159,7 +159,7 @@ class matchingImport extends qtiImport {
             $identifiant = $simpleProposal->getAttribute("identifier");
             $proposal->setInteractionMatching($this->interactionMatching);
             $this->om->persist($proposal);
-            $this->om->flush();
+            $this->om->forceFlush();
             $rightLabel = 0;
             //compare all relations to the proposal selected
             foreach ($allRelations as $relation) {
@@ -175,7 +175,7 @@ class matchingImport extends qtiImport {
                     $proposal->addAssociatedLabel($label);
                     $proposal->setInteractionMatching($this->interactionMatching);
                     $this->om->persist($proposal);
-                    $this->om->flush();
+                    $this->om->forceFlush();
                 }
             }
             $ordre++;

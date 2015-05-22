@@ -71,6 +71,6 @@ class openShortImport extends openImport
             }
             $this->om->persist($keyWord);
         }
-        $this->om->flush();
+        $this->om->forceFlush();
     }
 }

@@ -26,6 +26,7 @@ class QtiController extends Controller {
         }
 
         $qtiRepos = $this->container->get('ujm.qti_repository');
+        $qtiRepos->razValues();
         if ($this->extractFiles($qtiRepos) === false) {
 
             return $this->importError('qti can\'t open zip', $exoID);

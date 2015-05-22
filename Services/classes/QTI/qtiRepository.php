@@ -17,6 +17,7 @@ class qtiRepository {
     private $securityContext;
     private $container;
     private $exercise = null;
+    private $newsInteractions = array();
 
     /**
      * Constructor
@@ -32,6 +33,16 @@ class qtiRepository {
         $this->securityContext = $securityContext;
         $this->container = $container;
         $this->user = $this->securityContext->getToken()->getUser();
+    }
+
+    /**
+     *
+     * @access public
+     */
+    public function razValues ()
+    {
+        $this->exercise = null;
+        $this->newsInteractions = array();
     }
 
     /**
@@ -166,7 +177,8 @@ class qtiRepository {
                             }
                         }
                         if ($this->exercise != null) {
-                            $this->addQuestionInExercise($interX);
+                            //$this->addQuestionInExercise($interX);
+                            $this->newsInteractions[] = $interX;
                         }
                     }
                 }
@@ -319,7 +331,6 @@ class qtiRepository {
     {
         $this->exercise = $exercise;
         $scanFile = $this->scanFiles();
-        $this->exercise = null;
         if ($scanFile === true ) {
             return true;
         } else {
@@ -344,5 +355,18 @@ class qtiRepository {
 //        } else {
 //            $exoServ->setExerciseQuestion($this->exercise->getId(), $interX);
 //        }
+    }
+
+    /**
+     *
+     * @access public
+     *
+     * Associate an imported question with an exercise
+     */
+    public function assocExerciseQuestion()
+    {
+        foreach($this->newsInteractions as $interX) {
+            $this->addQuestionInExercise($interX);
+        }
     }
 }

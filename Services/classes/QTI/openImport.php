@@ -32,7 +32,7 @@ class openImport extends qtiImport
         $this->createInteraction();
         $this->interaction->setType('InteractionOpen');
         $this->om->persist($this->interaction);
-        $this->om->flush();
+        $this->om->forceFlush();
 
         $this->createInteractionOpen();
     }
@@ -56,7 +56,7 @@ class openImport extends qtiImport
         $this->interactionOpen->setScoreMaxLongResp($val->nodeValue);
 
         $this->om->persist($this->interactionOpen);
-        $this->om->flush();
+        $this->om->forceFlush();
 
     }
 
