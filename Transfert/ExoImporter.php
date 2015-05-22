@@ -115,6 +115,7 @@ class ExoImporter extends Importer implements ConfigurationInterface
            }
         }
         $this->om->endFlushSuite();
+        $this->om->forceFlush();
         $qtiRepos->assocExerciseQuestion();
 
         return $newExercise;
@@ -189,14 +190,14 @@ class ExoImporter extends Importer implements ConfigurationInterface
         $newExercise->setMarkMode('1');
         $newExercise->setPublished(FALSE);
         $this->om->persist($newExercise);
-        $this->om->forceFlush();
+        $this->om->flush();
 
         $subscription = new Subscription($user, $newExercise);
         $subscription->setAdmin(1);
         $subscription->setCreator(1);
 
         $this->om->persist($subscription);
-        $this->om->forceFlush();
+        $this->om->flush();
 
         return $newExercise;
     }

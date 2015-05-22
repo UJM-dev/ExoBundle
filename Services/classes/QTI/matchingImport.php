@@ -32,7 +32,7 @@ class matchingImport extends qtiImport {
         $this->createInteraction();
         $this->interaction->setType('InteractionMatching');
         $this->om->persist($this->interaction);
-        $this->om->forceFlush();
+        $this->om->flush();
         $this->createInteractionMatching();
 
         return $this->interactionMatching;
@@ -74,7 +74,7 @@ class matchingImport extends qtiImport {
         $this->matchingType();
         $this->getShuffle();
         $this->om->persist($this->interactionMatching);
-        $this->om->forceFlush();
+        $this->om->flush();
         $this->createLabels();
         $this->createProposals();
     }
@@ -94,7 +94,7 @@ class matchingImport extends qtiImport {
             $this->interactionMatching->setShuffle(false);
         }
         $this->om->persist($this->interactionMatching);
-        $this->om->forceFlush();
+        $this->om->flush();
     }
 
     /**
@@ -125,7 +125,7 @@ class matchingImport extends qtiImport {
 
             //recording in the DBB
             $this->om->persist($label);
-            $this->om->forceFlush();
+            $this->om->flush();
             $this->associatedLabels[$identifiant] = $label;
             $ordre++;
         }
@@ -159,7 +159,7 @@ class matchingImport extends qtiImport {
             $identifiant = $simpleProposal->getAttribute("identifier");
             $proposal->setInteractionMatching($this->interactionMatching);
             $this->om->persist($proposal);
-            $this->om->forceFlush();
+            $this->om->flush();
             $rightLabel = 0;
             //compare all relations to the proposal selected
             foreach ($allRelations as $relation) {
@@ -175,7 +175,7 @@ class matchingImport extends qtiImport {
                     $proposal->addAssociatedLabel($label);
                     $proposal->setInteractionMatching($this->interactionMatching);
                     $this->om->persist($proposal);
-                    $this->om->forceFlush();
+                    $this->om->flush();
                 }
             }
             $ordre++;

@@ -41,7 +41,7 @@ class holeImport extends qtiImport
 
         $this->createInteractionHole();
 
-        $this->om->forceFlush();
+        $this->om->flush();
 
         $this->addOptionValue();
 
@@ -196,7 +196,7 @@ class holeImport extends qtiImport
         }
         $this->interactionHole->setHtmlWithoutValue($htmlWithoutValue);
         $this->om->persist($this->interactionHole);
-        $this->om->forceFlush();
+        $this->om->flush();
     }
 
     /**

@@ -34,7 +34,7 @@ class graphicImport extends qtiImport {
         $this->createInteraction();
         $this->interaction->setType('InteractionGraphic');
         $this->om->persist($this->interaction);
-        $this->om->forceFlush();
+        $this->om->flush();
 
         $this->createInteractionGraphic();
 
@@ -57,7 +57,7 @@ class graphicImport extends qtiImport {
         $this->interactionGraph->setWidth($ob->getAttribute('width'));
 
         $this->om->persist($this->interactionGraph);
-        $this->om->forceFlush();
+        $this->om->flush();
 
         $this->createCoords();
         $this->createPicture($ob);
@@ -84,7 +84,7 @@ class graphicImport extends qtiImport {
             $coords->setColor('white');
             $coords->setInteractionGraphic($this->interactionGraph);
             $this->om->persist($coords);
-            $this->om->forceFlush();
+            $this->om->flush();
         }
     }
 
@@ -108,11 +108,11 @@ class graphicImport extends qtiImport {
         $document->setUser($user);
 
         $this->om->persist($document);
-        $this->om->forceFlush();
+        $this->om->flush();
 
         $this->interactionGraph->setDocument($document);
         $this->om->persist($this->interactionGraph);
-        $this->om->forceFlush();
+        $this->om->flush();
 
     }
 

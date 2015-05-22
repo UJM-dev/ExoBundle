@@ -63,7 +63,7 @@ abstract class qtiImport
         $this->question->setCategory($this->qtiCat);
         $this->getDescription();
         $this->om->persist($this->question);
-        $this->om->forceFlush();
+        $this->om->flush();
     }
 
     /**
@@ -81,7 +81,7 @@ abstract class qtiImport
             $this->interaction->setInvite($this->question->getDescription());
             $this->question->setDescription('');
             $this->om->persist($this->question);
-            $this->om->forceFlush();
+            $this->om->flush();
         }
         if ($feedback != null) {
             $this->interaction->setFeedBack($feedback);
@@ -102,7 +102,7 @@ abstract class qtiImport
         $this->qtiCat->setUser($this->user);
         $this->qtiCat->setLocker(false);
         $this->om->persist($this->qtiCat);
-        $this->om->forceFlush();
+        $this->om->flush();
     }
 
     /**

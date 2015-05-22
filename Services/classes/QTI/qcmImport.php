@@ -33,7 +33,7 @@ class qcmImport extends qtiImport {
         $this->createInteraction();
         $this->interaction->setType('InteractionQCM');
         $this->om->persist($this->interaction);
-        $this->om->forceFlush();
+        $this->om->flush();
 
         $this->createInteractionQCM();
 
@@ -83,7 +83,7 @@ class qcmImport extends qtiImport {
             $this->interactionQCM->setWeightResponse(true);
         }
         $this->om->persist($this->interactionQCM);
-        $this->om->forceFlush();
+        $this->om->flush();
         $this->createChoices();
     }
 
@@ -153,7 +153,7 @@ class qcmImport extends qtiImport {
             $choice->setRightResponse($this->getRightResponse($simpleChoice->getAttribute("identifier")));
             $choice->setInteractionQCM($this->interactionQCM);
             $this->om->persist($choice);
-            $this->om->forceFlush();
+            $this->om->flush();
             $order ++;
         }
     }
