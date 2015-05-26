@@ -220,7 +220,6 @@ class exerciseServices
     public function getNbPaper($uid, $exoID, $finished = false)
     {
         $papers = $this->om
-                       ->getManager()
                        ->getRepository('UJMExoBundle:Paper')
                        ->getExerciseUserPapers($uid, $exoID, $finished);
 
