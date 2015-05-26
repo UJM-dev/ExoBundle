@@ -365,10 +365,10 @@ class qtiRepository {
      *
      * @param UJM\ExoBundle\Entity\InteractionQCM or InteractionGraphic or .... $interX
      */
-    private function addQuestionInExercise($interX)
+    private function addQuestionInExercise($interX, $order = -1)
     {
         $exoServ = $this->container->get('ujm.exercise_services');
-        $exoServ->setExerciseQuestion($this->exercise, $interX);
+        $exoServ->setExerciseQuestion($this->exercise, $interX, $order);
     }
 
     /**
@@ -376,11 +376,18 @@ class qtiRepository {
      * @access public
      *
      * Associate an imported question with an exercise
+     * 
+     * @param boolean $ws if the import is with an workspace or no
      */
-    public function assocExerciseQuestion()
+    public function assocExerciseQuestion($ws = false)
     {
+        $order = 1;
         foreach($this->exerciseQuestions as $xmlName) {
-            $this->addQuestionInExercise($this->importedQuestions[$xmlName]);
+            if ($ws === false) {
+                $order = -1;
+            }
+            $this->addQuestionInExercise($this->importedQuestions[$xmlName], $order);
+            $order ++;
         }
     }
 }

@@ -116,7 +116,7 @@ class ExoImporter extends Importer implements ConfigurationInterface
         }
         $this->om->endFlushSuite();
         $this->om->forceFlush();
-        $qtiRepos->assocExerciseQuestion();
+        $qtiRepos->assocExerciseQuestion(true);
 
         return $newExercise;
     }

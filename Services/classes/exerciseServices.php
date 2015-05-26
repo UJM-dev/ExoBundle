@@ -1000,17 +1000,21 @@ class exerciseServices
      * @param InteractionQCM or InteractionGraphic or ... $interX
      *
      */
-    public function setExerciseQuestion($exercise, $interX)
+    public function setExerciseQuestion($exercise, $interX, $order = -1)
     {
         //$exo = $this->om->getRepository('UJMExoBundle:Exercise')->find($exercise);
         $eq = new ExerciseQuestion($exercise, $interX->getInteraction()->getQuestion());
 
-        $dql = 'SELECT max(eq.ordre) FROM UJM\ExoBundle\Entity\ExerciseQuestion eq '
-              . 'WHERE eq.exercise='.$exercise->getId();
-        $query = $this->doctrine->getManager()->createQuery($dql);
-        $maxOrdre = $query->getResult();
+        if ($order == -1) {
+            $dql = 'SELECT max(eq.ordre) FROM UJM\ExoBundle\Entity\ExerciseQuestion eq '
+                  . 'WHERE eq.exercise='.$exercise->getId();
+            $query = $this->doctrine->getManager()->createQuery($dql);
+            $maxOrdre = $query->getResult();
 
-        $eq->setOrdre((int) $maxOrdre[0][1] + 1);
+            $eq->setOrdre((int) $maxOrdre[0][1] + 1);
+        } else {
+            $eq->setOrdre($order);
+        }
         $this->om->persist($eq);
 
         $this->om->flush();
