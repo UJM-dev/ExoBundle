@@ -68,27 +68,18 @@ class qtiRepository {
      */
     public function createDirQTI($directory = 'default', $clear = TRUE)
     {
+        $fs = new FileSystem();
         $this->userRootDir = $this->container->getParameter('ujm.param.exo_directory') . '/qti/'.$this->user->getUsername().'/';
         $this->userDir = $this->userRootDir.$directory.'/';
 
-        if (!is_dir($this->container->getParameter('ujm.param.exo_directory'))) {
-            mkdir($this->container->getParameter('ujm.param.exo_directory'));
+        if ($clear === TRUE) {
+            $this->removeDirectory();
         }
         if (!is_dir($this->container->getParameter('ujm.param.exo_directory') . '/qti/')) {
-            mkdir($this->container->getParameter('ujm.param.exo_directory') . '/qti/');
-        }
-        if (!is_dir($this->userRootDir)) {
-            mkdir($this->userRootDir);
-        } else {
-            if ($clear === TRUE) {
-                $this->removeDirectory();
-            }
-        }
-        if (!is_dir($this->userRootDir.$directory)) {
-            mkdir($this->userRootDir.$directory);
+            $fs->mkdir($this->container->getParameter('ujm.param.exo_directory') . '/qti/');
         }
         if (!is_dir($this->userRootDir.$directory.'/zip')) {
-            mkdir($this->userRootDir.$directory.'/zip');
+            $fs->mkdir($this->userRootDir.$directory.'/zip');
         }
     }
 
