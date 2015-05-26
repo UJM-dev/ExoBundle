@@ -17,7 +17,8 @@ class qtiRepository {
     private $securityContext;
     private $container;
     private $exercise = null;
-    private $newsInteractions = array();
+    private $exerciseQuestions = array();
+    private $importedQuestions = array();
 
     /**
      * Constructor
@@ -42,7 +43,7 @@ class qtiRepository {
     public function razValues ()
     {
         $this->exercise = null;
-        $this->newsInteractions = array();
+        $this->exerciseQuestions = array();
     }
 
     /**
@@ -129,7 +130,8 @@ class qtiRepository {
         $xmlFileFound = false;
         if ($dh = opendir($this->getUserDir())) {
             while (($file = readdir($dh)) !== false) {
-                if (substr($file, -4, 4) == '.xml') {
+                if (substr($file, -4, 4) == '.xml'
+                        && $this->alreadyImported($file) === false) {
                     $xmlFileFound = true;
                     $document_xml = new \DomDocument();
                     $document_xml->load($this->getUserDir().'/'.$file);
@@ -177,8 +179,8 @@ class qtiRepository {
                             }
                         }
                         if ($this->exercise != null) {
-                            //$this->addQuestionInExercise($interX);
-                            $this->newsInteractions[] = $interX;
+                            $this->exerciseQuestions[] = $file;
+                            $this->importedQuestions[$file] = $interX;
                         }
                     }
                 }
@@ -193,6 +195,25 @@ class qtiRepository {
         $this->removeDirectory();
 
         return true;
+    }
+
+    /**
+     *
+     * @access private
+     * @param  String name of the xml file
+     *
+     * @return boolean
+     */
+    private function alreadyImported($fileName)
+    {
+        $alreadyImported = false;
+        if (isset($this->importedQuestions[$fileName])) {
+            $this->exerciseQuestions[] = $fileName;
+            $alreadyImported = true;
+        }
+
+
+        return $alreadyImported;
     }
 
     /**
@@ -348,13 +369,6 @@ class qtiRepository {
     {
         $exoServ = $this->container->get('ujm.exercise_services');
         $exoServ->setExerciseQuestion($this->exercise, $interX);
-
-//        // for differenciate import one question in an exercice or if import a workspace
-//        if (is_numeric($this->exercise)) {
-//            $exoServ->setExerciseQuestion($this->exercise, $interX);
-//        } else {
-//            $exoServ->setExerciseQuestion($this->exercise->getId(), $interX);
-//        }
     }
 
     /**
@@ -365,8 +379,8 @@ class qtiRepository {
      */
     public function assocExerciseQuestion()
     {
-        foreach($this->newsInteractions as $interX) {
-            $this->addQuestionInExercise($interX);
+        foreach($this->exerciseQuestions as $xmlName) {
+            $this->addQuestionInExercise($this->importedQuestions[$xmlName]);
         }
     }
 }
