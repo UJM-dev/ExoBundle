@@ -91,9 +91,7 @@ class qtiRepository {
      */
     public function removeDirectory()
     {
-        if(!is_dir($this->userRootDir)){
-            throw new \Exception($this->userRootDir.' is not directory '.__LINE__.', file '.__FILE__);
-        } else {
+        if(is_dir($this->userRootDir)) {
             $fs = new FileSystem();
             $iterator = new \DirectoryIterator($this->userRootDir);
 
@@ -374,7 +372,7 @@ class qtiRepository {
      * @access public
      *
      * Associate an imported question with an exercise
-     * 
+     *
      * @param boolean $ws if the import is with an workspace or no
      */
     public function assocExerciseQuestion($ws = false)
