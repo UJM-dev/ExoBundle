@@ -8,6 +8,7 @@
 namespace UJM\ExoBundle\Services\classes\QTI;
 
 use Symfony\Component\Security\Core\SecurityContextInterface;
+use Claroline\CoreBundle\Library\Utilities\FileSystem;
 
 class qtiRepository {
 
@@ -99,9 +100,15 @@ class qtiRepository {
     public function removeDirectory()
     {
         if(!is_dir($this->userRootDir)){
-            throw new $this->createNotFoundException($this->userRootDir.' is not directory '.__LINE__.', file '.__FILE__);
+            throw new \Exception($this->userRootDir.' is not directory '.__LINE__.', file '.__FILE__);
         } else {
-            exec ('rm -rf '.$this->userRootDir.'*');
+            $fs = new FileSystem();
+            $iterator = new \DirectoryIterator($this->userRootDir);
+
+            foreach ($iterator as $el) {
+                if ($el->isDir()) $fs->rmDir($el->getRealPath(), true);
+                if ($el->isFile()) $fs->rm($el->getRealPath());
+            }
         }
     }
 
