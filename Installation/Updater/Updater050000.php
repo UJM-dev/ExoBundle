@@ -24,21 +24,21 @@ class Updater050000 extends Updater
 
     public function preUpdate($currentVersion)
     {
-        $this->log('ceci est un test migration '.$currentVersion);
-//        $conn = $this->om->getConnection();
-//        $stmt = $conn->query("SELECT * from doctrine_clarolinecorebundle_versions where version=20150428152724");
-//        $found = false;
-//
-//        while ($row = $stmt->fetch()) {
-//            $found = true;
-//        }
-//
-//        if (!$found) {
-//            $this->log('Inserting migration 20150428152724.');
-//            $conn->query("INSERT INTO doctrine_clarolinecorebundle_versions (version) VALUES (20150428152724)");
-//        } else {
-//            $this->log('Migrations found.');
-//        }
+        $this->log('Updating migration versions...');
+        $conn = $this->om->getConnection();
+        $stmt = $conn->query("SELECT * from doctrine_ujmexobundle_versions where version=20150416104535");
+        $found = false;
+
+        while ($row = $stmt->fetch()) {
+            $found = true;
+        }
+
+        if (!$found) {
+            $this->log('Inserting migration 20150416104535.');
+            $conn->query("INSERT INTO doctrine_clarolinecorebundle_versions (version) VALUES (20150416104535)");
+        } else {
+            $this->log('Migrations found.');
+        }
 
     }
 }
