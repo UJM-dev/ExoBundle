@@ -24,4 +24,9 @@ class UJMExoBundle extends PluginBundle
     {
         return 'DataFixtures';
     }
+
+    public function getAdditionalInstaller()
+    {
+        return new AdditionalInstaller();
+    }
 }
