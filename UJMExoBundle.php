@@ -4,6 +4,7 @@ namespace UJM\ExoBundle;
 
 use Claroline\CoreBundle\Library\PluginBundle;
 use Claroline\KernelBundle\Bundle\ConfigurationBuilder;
+use UJM\ExoBundle\Installation\AdditionalInstaller;
 
 class UJMExoBundle extends PluginBundle
 {

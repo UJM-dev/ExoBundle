@@ -9,6 +9,7 @@
 namespace UJM\ExoBundle\Installation\Updater;
 
 use Claroline\InstallationBundle\Updater\Updater;
+use Symfony\Component\DependencyInjection\ContainerInterface;
 
 class Updater050000 extends Updater
 {
@@ -21,9 +22,9 @@ class Updater050000 extends Updater
         $this->om = $container->get('doctrine.orm.entity_manager');
     }
 
-    public function preUpdate()
+    public function preUpdate($currentVersion)
     {
-        $this->log('ceci est un test migration');
+        $this->log('ceci est un test migration '.$currentVersion);
 //        $conn = $this->om->getConnection();
 //        $stmt = $conn->query("SELECT * from doctrine_clarolinecorebundle_versions where version=20150428152724");
 //        $found = false;
