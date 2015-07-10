@@ -49,3 +49,14 @@ all_paper:
 all_qti:
     resource: "routing/all/qti.yml"
     prefix:   /all/qti
+    
+exercise_player:
+    resource: "@UJMExoBundle/Controller/Player/ExercisePlayerController.php"
+    type: annotation
+    prefix: /player
+    
+   
+exercise_pages:
+    resource: "@UJMExoBundle/Controller/Player/ExercisePlayerPageController.php"
+    type: annotation
+    prefix: /page
