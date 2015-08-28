@@ -305,6 +305,7 @@ qti_xml_not_found: Schéma XML non trouvé
 question: Question
 questions: Questions
 question_creation: Création d'une question
+question_comment: Commentaire général de la question
 question_description: Description de la question (facultatif)
 question_model: Définir comme modèle
 question_title: Titre de la question

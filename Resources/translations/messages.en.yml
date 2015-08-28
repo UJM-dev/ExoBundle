@@ -305,6 +305,7 @@ qti_xml_not_found: XML schema not found
 question: Question
 questions: Questions
 question_creation: Question creation
+question_comment: General feedback of the question
 question_description: Description of the question (optional)
 question_model: Set as model
 question_title: Question title
