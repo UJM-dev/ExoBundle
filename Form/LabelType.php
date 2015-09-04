@@ -21,14 +21,15 @@ class LabelType extends AbstractType
                         'class' => 'labelVal form-control',
                         'style' => 'height:34px;',
                         'placeholder' => 'choice'
-                    )
+                    ),
                 )
             )
             ->add(
                 'scoreRightResponse', 'text', array(
                     'required' => true,
                     'label' => ' ', 'attr' => array('class' => 'labelScore', 'placeholder' => 'points'
-                  )))
+                  ),
+                    ))
                 //add a field for correspondance, and will be replace by the our field
             ->add( "correspondance", "choice", array("mapped"=>false)
                   )
@@ -44,7 +45,7 @@ class LabelType extends AbstractType
                                    'data-new-tab' => 'yes',
                                    'placeholder' => 'feedback_answer_check',
                                    'style' => 'height:34px;'
-                       )
+                       ),
                   )
             );
     }
@@ -54,6 +55,7 @@ class LabelType extends AbstractType
         $resolver->setDefaults(
             array(
                 'data_class' => 'UJM\ExoBundle\Entity\Label',
+                'translation_domain' => 'ujm_exo'
             ));
     }
 

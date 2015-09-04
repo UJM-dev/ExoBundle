@@ -31,7 +31,7 @@ class QuestionType extends AbstractType
                 'title', 'text', array(
                     'label' => 'title',
                     'required' => false,
-                    'attr'  => array( 'placeholder' => 'question_title')
+                    'attr'  => array( 'placeholder' => 'question_title'),
                 )
             )
             ->add(
@@ -49,7 +49,7 @@ class QuestionType extends AbstractType
                                 ->where('c.id = ?1')
                                 ->setParameter(1, $this->catID);
                         }
-                    }
+                    },
                 )
             )
             ->add('description', 'textarea', array(
@@ -58,13 +58,14 @@ class QuestionType extends AbstractType
                     'attr'  => array( 'placeholder' => 'question_description',
                                       'class'=> 'form-control',
                                       'data-new-tab' => 'yes'
-                                    )
+                                    ),
                 )
             )
             ->add(
                 'model', 'checkbox', array(
                     'required' => false,
-                    'label' => 'question_model'
+                    'label' => 'question_model',
+                    'translation_domain' => 'ujm_exo'
                 )
             );
     }
@@ -74,6 +75,7 @@ class QuestionType extends AbstractType
         $resolver->setDefaults(
             array(
                 'data_class' => 'UJM\ExoBundle\Entity\Question',
+                'translation_domain' => 'ujm_exo'
             )
         );
     }
@@ -82,5 +84,4 @@ class QuestionType extends AbstractType
     {
         return 'ujm_exobundle_questiontype';
     }
-
 }

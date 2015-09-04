@@ -31,6 +31,7 @@ class HintType extends AbstractType
         $resolver->setDefaults(
             array(
                 'data_class' => 'UJM\ExoBundle\Entity\Hint',
+                'translation_domain' => 'ujm_exo'
             )
         );
     }
@@ -39,5 +40,6 @@ class HintType extends AbstractType
     {
         return 'ujm_exobundle_hinttype';
     }
+    
 
 }

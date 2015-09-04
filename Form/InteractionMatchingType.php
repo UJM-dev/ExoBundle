@@ -67,7 +67,8 @@ class InteractionMatchingType extends AbstractType
         $resolver->setDefaults(
             array(
                 'data_class' => 'UJM\ExoBundle\Entity\InteractionMatching',
-                'cascade_validation' => true
+                'cascade_validation' => true,
+                'translation_domain' => 'ujm_exo'
             )
         );
     }

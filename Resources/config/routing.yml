@@ -49,3 +49,23 @@ all_paper:
 all_qti:
     resource: "routing/all/qti.yml"
     prefix:   /all/qti
+    
+sequence:
+    resource: "@UJMExoBundle/Controller/Sequence/SequenceController.php"
+    type: annotation
+    prefix: /sequence    
+   
+sequence_steps:
+    resource: "@UJMExoBundle/Controller/Sequence/StepController.php"
+    type: annotation
+    prefix: /page
+    
+sequence_step_questions:
+    resource: "@UJMExoBundle/Controller/Sequence/StepQuestionController.php"
+    type: annotation
+    prefix: /step-question
+
+api_exercise:
+    resource: "@UJMExoBundle/Controller/Api/ExerciseController.php"
+    type: annotation
+    prefix: /api

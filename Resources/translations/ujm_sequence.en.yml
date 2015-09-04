@@ -1,0 +1,50 @@
+# s
+sequence_panel_title: Sequence
+sequence_panel_hide: Hide / Show sequence informations
+sequence_type_name : Sequence name
+sequence_type_description : Sequence description
+sequence_start_date: Start date
+sequence_end_date: End date
+sequence_name : Name
+sequence_description : Description
+sequence_step_description: Description
+sequence_step_previous: Previous step
+sequence_step_next: Next step
+sequence_step_view: View step
+sequence_steps_save: Save steps
+sequence_step_add: Add step
+sequence_step_content_add: Add content step
+sequence_step_question_add: Add question step
+sequence_step_remove: Remove step
+sequence_save: Save sequence
+sequence_step_panel_title: Steps
+sequence_select_available_question: Select a question
+sequence_step_add_question: Add question
+step_question_shuffle: Shuffle question order for this step
+
+# q
+question_hints: Hints
+question_objects: Objects
+question_global_feedback: Global feedback
+question_resources: Resources
+question_choices: Choices
+question_choice_score: Score
+question_allow_multiple_choice: Allow multiple choice
+question_randomize_choices: Shuffle choices order
+question_panel_hide: Hide / Show question details
+question_remove: Remove question
+question_cloze_text: Cloze text
+question_solutions: Solutions
+question_solution_answers: Answer(s)
+question_solution_score: Score
+
+# m
+meta_authors: Author(s)
+meta_others: Others
+meta_author_name: Name
+meta_author_status: Status
+meta_author_mail: Email
+meta_created: Created
+meta_updated: Modified
+meta_licence: Licence
+meta_description: Description

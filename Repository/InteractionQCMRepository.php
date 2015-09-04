@@ -12,7 +12,6 @@ use Doctrine\ORM\EntityRepository;
  */
 class InteractionQCMRepository extends EntityRepository
 {
-
     /**
      * Get InteractionQCM linked with an interaction
      *
@@ -28,6 +27,6 @@ class InteractionQCMRepository extends EntityRepository
         $qb->join('iqcm.interaction', 'i')
             ->where($qb->expr()->in('i.id', $interactionId));
 
-        return $qb->getQuery()->getResult();
+        return $qb->getQuery()->getSingleResult();
     }
 }

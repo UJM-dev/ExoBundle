@@ -6,8 +6,10 @@ use Symfony\Bundle\FrameworkBundle\Controller\Controller;
 use Symfony\Component\Form\FormError;
 
 use UJM\ExoBundle\Entity\InteractionQCM;
+use UJM\ExoBundle\Entity\Response;
 use UJM\ExoBundle\Form\InteractionQCMType;
 use UJM\ExoBundle\Form\InteractionQCMHandler;
+use UJM\ExoBundle\Form\ResponseType;
 
 /**
  * InteractionQCM controller.
@@ -15,6 +17,77 @@ use UJM\ExoBundle\Form\InteractionQCMHandler;
  */
 class InteractionQCMController extends Controller
 {
+
+    /**
+     *
+     * @access public
+     *
+     * Forwarded by 'UJMExoBundle:Question:show'
+     * Parameters posted :
+     *     \UJM\ExoBundle\Entity\Interaction interaction
+     *     integer exoID
+     *     array vars
+     *
+     * @return \Symfony\Component\HttpFoundation\Response
+     */
+    public function showAction()
+    {
+        $attr = $this->get('request')->attributes;
+        $em = $this->get('doctrine')->getEntityManager();
+        $vars = $attr->get('vars');
+
+        $response = new Response();
+        $interactionQCM = $em->getRepository('UJMExoBundle:InteractionQCM')
+                             ->getInteractionQCM($attr->get('interaction')->getId());
+
+         if ($interactionQCM->getShuffle()) {
+             $interactionQCM->shuffleChoices();
+         } else {
+             $interactionQCM->sortChoices();
+         }
+
+         $form   = $this->createForm(new ResponseType(), $response);
+
+         $vars['interactionToDisplayed'] = $interactionQCM;
+         $vars['form']           = $form->createView();
+         $vars['exoID']          = $attr->get('exoID');
+
+         return $this->render('UJMExoBundle:InteractionQCM:paper.html.twig', $vars);
+    }
+
+    /**
+     *
+     * @access public
+     *
+     * Forwarded by 'UJMExoBundle:Question:formNew'
+     * Parameters posted :
+     *     integer exoID
+     *
+     * @return \Symfony\Component\HttpFoundation\Response
+     */
+    public function newAction()
+    {
+       $attr = $this->get('request')->attributes;
+       $entity = new InteractionQCM();
+       $form   = $this->createForm(
+           new InteractionQCMType(
+               $this->container->get('security.token_storage')
+                   ->getToken()->getUser()
+           ), $entity
+       );
+       $serviceQcm = $this->container->get('ujm.exo_InteractionQCM');
+       $typeQCM = $serviceQcm->getTypeQCM();
+
+       return $this->container->get('templating')->renderResponse(
+           'UJMExoBundle:InteractionQCM:new.html.twig', array(
+           'exoID'   => $attr->get('exoID'),
+           'entity'  => $entity,
+           'typeQCM' => json_encode($typeQCM),
+           'form'    => $form->createView()
+           )
+       );
+    }
+
 
     /**
      * Creates a new InteractionQCM entity.
@@ -25,7 +98,7 @@ class InteractionQCMController extends Controller
      */
     public function createAction()
     {
-        $services = $this->container->get('ujm.exercise_services');
+        $services = $this->container->get('ujm.exo_InteractionQCM');
         $interQCM  = new InteractionQCM();
         $form      = $this->createForm(
             new InteractionQCMType(
@@ -36,18 +109,12 @@ class InteractionQCMController extends Controller
         $exoID = $this->container->get('request')->request->get('exercise');
 
         //Get the lock category
-        $user = $this->container->get('security.token_storage')->getToken()->getUser()->getId();
-        $Locker = $this->getDoctrine()->getManager()->getRepository('UJMExoBundle:Category')->getCategoryLocker($user);
-        if (empty($Locker)) {
-            $catLocker = "";
-        } else {
-            $catLocker = $Locker[0];
-        }
+        $catSer = $this->container->get('ujm.exo_category');
 
         $exercise = $this->getDoctrine()->getManager()->getRepository('UJMExoBundle:Exercise')->find($exoID);
         $formHandler = new InteractionQCMHandler(
             $form, $this->get('request'), $this->getDoctrine()->getManager(),
-            $this->container->get('ujm.exercise_services'),
+            $this->container->get('ujm.exo_exercise'),
             $this->container->get('security.token_storage')->getToken()->getUser(), $exercise,
             $this->get('translator')
         );
@@ -74,7 +141,7 @@ class InteractionQCMController extends Controller
 
         if ($qcmHandler == 'infoDuplicateQuestion') {
             $form->addError(new FormError(
-                    $this->get('translator')->trans('info_duplicate_question')
+                    $this->get('translator')->trans('info_duplicate_question', array(), 'ujm_exo')
                     ));
         }
 
@@ -88,18 +155,68 @@ class InteractionQCMController extends Controller
             'typeQCM' => json_encode($typeQCM)
             )
         );
-
+        $interactionType = $this->container->get('ujm.exo_question')->getTypes();
         $formWithError = substr($formWithError, strrpos($formWithError, 'GMT') + 3);
 
         return $this->render(
-            'UJMExoBundle:Question:new.html.twig', array(
-            'formWithError' => $formWithError,
-            'exoID'  => $exoID,
-            'linkedCategory' =>  $this->container->get('ujm.exercise_services')->getLinkedCategories(),
-            'locker' => $catLocker
+                'UJMExoBundle:Question:new.html.twig', array(
+                'formWithError' => $formWithError,
+                'exoID'  => $exoID,
+                'linkedCategory' =>  $catSer->getLinkedCategories(),
+                'locker' => $catSer->getLockCategory(),
+                'interactionType' => $interactionType
             )
         );
     }
+
+    /**
+     *
+     * @access public
+     *
+     * Forwarded by 'UJMExoBundle:Question:edit'
+     * Parameters posted :
+     *     \UJM\ExoBundle\Entity\Interaction interaction
+     *     integer exoID
+     *     integer catID
+     *     \Claroline\CoreBundle\Entity\User user
+     *
+     * @return \Symfony\Component\HttpFoundation\Response
+     */
+    public function editAction()
+    {
+        $attr = $this->get('request')->attributes;
+        $qcmSer  = $this->container->get('ujm.exo_InteractionQCM');
+        $catSer = $this->container->get('ujm.exo_category');
+        $em = $this->get('doctrine')->getEntityManager();
+
+        $interactionQCM = $em->getRepository('UJMExoBundle:InteractionQCM')
+                             ->getInteractionQCM($attr->get('interaction')->getId());
+        //fired a sort function
+        $interactionQCM->sortChoices();
+
+        $editForm = $this->createForm(
+            new InteractionQCMType(
+        $attr->get('user'), $attr->get('catID')), $interactionQCM
+        );
+
+        $typeQCM = $qcmSer->getTypeQCM();
+        $linkedCategory = $catSer->getLinkedCategories();
+
+        $vars['entity']         = $interactionQCM;
+        $vars['edit_form']      = $editForm->createView();
+        $vars['nbResponses']    = $qcmSer->getNbReponses($attr->get('interaction'));
+        $vars['linkedCategory'] = $linkedCategory;
+        $vars['typeQCM'       ] = json_encode($typeQCM);
+        $vars['exoID']          = $attr->get('exoID');
+        $vars['locker']         = $catSer->getLockCategory();
+
+        if ($attr->get('exoID') != -1) {
+            $exercise = $em->getRepository('UJMExoBundle:Exercise')->find($attr->get('exoID'));
+            $vars['_resource'] = $exercise;
+        }
+
+        return $this->render('UJMExoBundle:InteractionQCM:edit.html.twig', $vars);
+   }
 
     /**
      * Edits an existing InteractionQCM entity.
@@ -136,7 +253,7 @@ class InteractionQCMController extends Controller
         );
         $formHandler = new InteractionQCMHandler(
             $editForm, $this->get('request'), $this->getDoctrine()->getManager(),
-            $this->container->get('ujm.exercise_services'),
+            $this->container->get('ujm.exo_exercise'),
             $this->container->get('security.token_storage')->getToken()->getUser(),
             $this->get('translator')
         );
@@ -211,8 +328,8 @@ class InteractionQCMController extends Controller
             $vars['_resource'] = $exercise;
         }
 
-        $exerciseSer = $this->container->get('ujm.exercise_services');
-        $res = $exerciseSer->responseQCM($request);
+        $interQcmSer = $this->container->get('ujm.exo_InteractionQCM');
+        $res = $interQcmSer->response($request);
 
         $vars['score']    = $res['score'];
         $vars['penalty']  = $res['penalty'];

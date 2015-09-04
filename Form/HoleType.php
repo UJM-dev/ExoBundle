@@ -46,7 +46,8 @@ class HoleType extends AbstractType
     {
         $resolver->setDefaults(
                 array('data_class' => 'UJM\ExoBundle\Entity\Hole',
-                      'cascade_validation' => true
+                      'cascade_validation' => true,
+                      'translation_domain' => 'ujm_exo'
                 )
         );
     }

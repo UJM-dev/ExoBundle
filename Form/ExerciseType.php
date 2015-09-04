@@ -67,9 +67,9 @@ class ExerciseType extends AbstractType
                         '1' => 'at_the_end_of_assessment',
                         '2' => 'after_the_last_attempt',
                         '3' => 'from',
-                        '4' => 'never'
-                    )
+                        '4' => 'never'                       
                 )
+            )
             )
             ->add(
                 'dateCorrection', 'datetime', array(
@@ -129,6 +129,7 @@ class ExerciseType extends AbstractType
         $resolver->setDefaults(
             array(
                 'data_class' => 'UJM\ExoBundle\Entity\Exercise',
+                'translation_domain' => 'ujm_exo'
             )
         );
     }

@@ -22,7 +22,7 @@ class ProposalType extends AbstractType
                         'class'=>'form-control',
                         'style' => 'height:34px;',
                         'placeholder' => 'choice'
-                    )
+                    ),
                 )
             )
             ->add(
@@ -37,6 +37,7 @@ class ProposalType extends AbstractType
         $resolver->setDefaults(
             array(
                 'data_class' => 'UJM\ExoBundle\Entity\Proposal',
+                'translation_domain' => 'ujm_exo'
             ));
     }
 

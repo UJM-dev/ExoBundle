@@ -58,7 +58,7 @@ class QuestionController extends Controller
 
         $em = $this->getDoctrine()->getManager();
 
-        $services = $this->container->get('ujm.exercise_services');
+        $services = $this->container->get('ujm.exo_question');
 
         if ($resourceId != -1) {
             $exercise = $em->getRepository('UJMExoBundle:Exercise')->find($resourceId);
@@ -92,7 +92,8 @@ class QuestionController extends Controller
             ->getUserInteraction($uid);
 
         foreach ($interactions as $interaction) {
-            $actions = $services->getActionInteraction($em, $interaction);
+
+            $actions = $services->getActionInteraction($interaction);
             $questionWithResponse += $actions[0];
             $alreadyShared += $actions[1];
         }
@@ -101,7 +102,7 @@ class QuestionController extends Controller
             ->findBy(array('user' => $uid));
 
         foreach ($shared as $s) {
-            $actionsS = $services->getActionShared($em, $s);
+            $actionsS = $services->getActionShared($s);
             $sharedWithMe += $actionsS[0];
             $shareRight += $actionsS[1];
             $questionWithResponse += $actionsS[2];
@@ -149,7 +150,10 @@ class QuestionController extends Controller
                         ->getManager()
                         ->getRepository('UJMExoBundle:Exercise')
                         ->getExerciseAdmin($uid);
-
+        
+        
+        $interactionType = $this->container->get('ujm.exo_question')->getTypes();
+        
         $vars['pagerMy']              = $pagerfantaMy;
         $vars['pagerShared']          = $pagerfantaShared;
         $vars['interactions']         = $interactionsPager;
@@ -161,6 +165,7 @@ class QuestionController extends Controller
         $vars['listExo']              = $listExo;
         $vars['idExo']                = -1;
         $vars['QuestionsExo']         = 'false';
+        $vars['interactionType'] = $interactionType;
 
         if ($request->get("qtiError")) {
             $vars['qtiError'] = $request->get("qtiError");
@@ -187,7 +192,7 @@ class QuestionController extends Controller
 
         $em = $this->getDoctrine()->getManager();
 
-        $services = $this->container->get('ujm.exercise_services');
+        $services = $this->container->get('ujm.exo_question');
 
         $user = $this->container->get('security.token_storage')->getToken()->getUser();
         $uid = $user->getId();
@@ -206,12 +211,13 @@ class QuestionController extends Controller
                 ->getExerciseInteraction($em, $idExo, 0);
         }
 
-        $allActions = $services->getActionsAllQuestions($listQExo, $uid, $em);
+        $allActions = $services->getActionsAllQuestions($listQExo, $uid);
 
         $actionQ = $allActions[0];
         $questionWithResponse = $allActions[1];
         $alreadyShared = $allActions[2];
         $shareRight = $allActions[4];
+        $interactionType = $this->container->get('ujm.exo_question')->getTypes();
 
         $listExo = $this->getDoctrine()
                         ->getManager()
@@ -227,6 +233,7 @@ class QuestionController extends Controller
         $vars['listExo']              = $listExo;
         $vars['idExo']                = $idExo;
         $vars['QuestionsExo']         = 'true';
+        $vars['interactionType'] = $interactionType;
 
         return $this->render('UJMExoBundle:Question:index.html.twig', $vars);
     }
@@ -245,21 +252,21 @@ class QuestionController extends Controller
     {
         $vars = array();
         $allowToAccess = 0;
-        $exerciseSer = $this->container->get('ujm.exercise_services');
+        $questionSer = $this->container->get('ujm.exo_question');
         $em = $this->getDoctrine()->getManager();
 
         if ($exoID != -1) {
             $exercise = $em->getRepository('UJMExoBundle:Exercise')->find($exoID);
             $vars['_resource'] = $exercise;
 
-            if ($this->container->get('ujm.exercise_services')
+            if ($this->container->get('ujm.exo_exercise')
                      ->isExerciseAdmin($exercise)) {
                 $allowToAccess = 1;
             }
         }
 
-        $question = $exerciseSer->controlUserQuestion($id, $this->container, $em);
-        $sharedQuestion = $exerciseSer->controlUserSharedQuestion($id);
+        $question = $questionSer->controlUserQuestion($id);
+        $sharedQuestion = $questionSer->controlUserSharedQuestion($id);
 
         if (count($question) > 0 || count($sharedQuestion) > 0 || $allowToAccess == 1) {
             $interaction = $this->getDoctrine()
@@ -269,103 +276,12 @@ class QuestionController extends Controller
 
             $typeInter = $interaction->getType();
 
-            switch ($typeInter) {
-                case "InteractionQCM":
+            return $this->forward(
+                        'UJMExoBundle:' . $typeInter . ':show', array('interaction' => $interaction, 'exoID' => $exoID, 'vars' => $vars
+                            ));
 
-                    $response = new Response();
-                    $interactionQCM = $this->getDoctrine()
-                        ->getManager()
-                        ->getRepository('UJMExoBundle:InteractionQCM')
-                        ->getInteractionQCM($interaction->getId());
-
-                    if ($interactionQCM[0]->getShuffle()) {
-                        $interactionQCM[0]->shuffleChoices();
-                    } else {
-                        $interactionQCM[0]->sortChoices();
-                    }
-
-                    $form   = $this->createForm(new ResponseType(), $response);
-
-                    $vars['interactionToDisplayed'] = $interactionQCM[0];
-                    $vars['form']           = $form->createView();
-                    $vars['exoID']          = $exoID;
-
-                    return $this->render('UJMExoBundle:InteractionQCM:paper.html.twig', $vars);
-
-                case "InteractionGraphic":
-
-                    $interactionGraph = $this->getDoctrine()
-                        ->getManager()
-                        ->getRepository('UJMExoBundle:InteractionGraphic')
-                        ->getInteractionGraphic($interaction->getId());
-
-                    $repository = $this->getDoctrine()
-                        ->getManager()
-                        ->getRepository('UJMExoBundle:Coords');
-
-                    $listeCoords = $repository->findBy(array('interactionGraphic' => $interactionGraph[0]));
-
-                    $vars['interactionToDisplayed'] = $interactionGraph[0];
-                    $vars['listeCoords']        = $listeCoords;
-                    $vars['exoID']              = $exoID;
-
-                    return $this->render('UJMExoBundle:InteractionGraphic:paper.html.twig', $vars);
-
-                case "InteractionHole":
-
-                    $response = new Response();
-                    $interactionHole = $this->getDoctrine()
-                        ->getManager()
-                        ->getRepository('UJMExoBundle:InteractionHole')
-                        ->getInteractionHole($interaction->getId());
-
-                    $form   = $this->createForm(new ResponseType(), $response);
-
-                    $vars['interactionToDisplayed'] = $interactionHole[0];
-                    $vars['form']            = $form->createView();
-                    $vars['exoID']           = $exoID;
-
-                    return $this->render('UJMExoBundle:InteractionHole:paper.html.twig', $vars);
-
-                case "InteractionOpen":
-                    $response = new Response();
-                    $interactionOpen = $this->getDoctrine()
-                        ->getManager()
-                        ->getRepository('UJMExoBundle:InteractionOpen')
-                        ->getInteractionOpen($interaction->getId());
-
-                    $form   = $this->createForm(new ResponseType(), $response);
-
-                    $vars['interactionToDisplayed'] = $interactionOpen[0];
-                    $vars['form']            = $form->createView();
-                    $vars['exoID']           = $exoID;
-
-                    return $this->render('UJMExoBundle:InteractionOpen:paper.html.twig', $vars);
-
-                case "InteractionMatching":
-                    $response = new Response();
-                    $interactionMatching = $this->getDoctrine()
-                            ->getManager()
-                            ->getRepository('UJMExoBundle:InteractionMatching')
-                            ->getInteractionMatching($interaction->getId());
-
-                    if ($interactionMatching[0]->getShuffle()) {
-                        $interactionMatching[0]->shuffleProposals();
-                        $interactionMatching[0]->shuffleLabels();
-                    } else {
-                        $interactionMatching[0]->sortProposals();
-                        $interactionMatching[0]->sortLabels();
-                    }
-
-                    $form = $this->createForm(new ResponseType(), $response);
-
-                    $vars['interactionToDisplayed'] = $interactionMatching[0];
-                    $vars['form'] = $form->createView();
-                    $vars['exoID'] = $exoID;
-
-                    return $this->render('UJMExoBundle:InteractionMatching:paper.html.twig', $vars);
-            }
         } else {
+
             return $this->redirect($this->generateUrl('ujm_question_index'));
         }
     }
@@ -381,16 +297,18 @@ class QuestionController extends Controller
      */
     public function newAction($exoID)
     {
-
-
+        $catSer = $this->container->get('ujm.exo_category');
         $variables = array(
-            'exoID' => $exoID,
-            'linkedCategory' =>  $this->container->get('ujm.exercise_services')->getLinkedCategories(),
-            'locker' => $this->getLockCategory(),
+            'exoID'          => $exoID,
+            'linkedCategory' => $catSer->getLinkedCategories(),
+            'locker'         => $catSer->getLockCategory(),
         );
 
         $em = $this->getDoctrine()->getManager();
         $exercise = $em->getRepository('UJMExoBundle:Exercise')->find($exoID);
+
+        $interactionType = $this->container->get('ujm.exo_question')->getTypes();
+        $variables['interactionType'] = $interactionType;
 
         if ($exercise) {
             $variables['_resource'] = $exercise;
@@ -406,30 +324,30 @@ class QuestionController extends Controller
      *
      * @return \Symfony\Component\HttpFoundation\Response
      */
-    public function createAction()
-    {
-        $entity  = new Question();
-        $request = $this->getRequest();
-        $form    = $this->createForm(new QuestionType(), $entity);
-        $form->handleRequest($request);
-
-        if ($form->isValid()) {
-            $em = $this->getDoctrine()->getManager();
-            $em->persist($entity);
-            $em->flush();
-
-            return $this->redirect($this->generateUrl('question_show', array('id' => $entity->getId())));
-        }
-
-        return $this->render(
-            'UJMExoBundle:Question:new.html.twig', array(
-            'entity' => $entity,
-            'form'   => $form->createView(),
-            'linkedCategory' =>  $this->container->get('ujm.exercise_services')->getLinkedCategories(),
-            'locker' => $this->getLockCategory(),
-            )
-        );
-    }
+//    public function createAction()
+//    {
+//        $entity  = new Question();
+//        $request = $this->getRequest();
+//        $form    = $this->createForm(new QuestionType(), $entity);
+//        $form->handleRequest($request);
+//
+//        if ($form->isValid()) {
+//            $em = $this->getDoctrine()->getManager();
+//            $em->persist($entity);
+//            $em->flush();
+//
+//            return $this->redirect($this->generateUrl('question_show', array('id' => $entity->getId())));
+//        }
+//
+//        return $this->render(
+//            'UJMExoBundle:Question:new.html.twig', array(
+//            'entity' => $entity,
+//            'form'   => $form->createView(),
+//            'linkedCategory' =>  $this->container->get('ujm.exo_question')->getLinkedCategories(),
+//            'locker' => $this->getLockCategory(),
+//            )
+//        );
+//    }
 
     /**
      * Displays a form to edit an existing Question entity.
@@ -438,16 +356,14 @@ class QuestionController extends Controller
      *
      * @param integer $id id Question
      * @param integer $exoID id Exercise if the user is in an exercise, -1 if the user is in the question bank
-     * @param \Symfony\Component\Form\FormBuilder $form if form is not valid (see the methods update in InteractionGraphicContoller, InteractionQCMConteroller ...)
      *
      * @return \Symfony\Component\HttpFoundation\Response
      */
-    public function editAction($id, $exoID, $form = null)
+    public function editAction($id, $exoID)
     {
-        $services = $this->container->get('ujm.exercise_services');
-        $em = $this->getDoctrine()->getManager();
-        $question = $services->controlUserQuestion($id, $this->container, $em);
-        $share    = $this->container->get('ujm.exercise_services')->controlUserSharedQuestion($id);
+        $services = $this->container->get('ujm.exo_question');
+        $question = $services->controlUserQuestion($id);
+        $share    = $services->controlUserSharedQuestion($id);
         $user     = $this->container->get('security.token_storage')->getToken()->getUser();
         $catID    = -1;
 
@@ -463,209 +379,13 @@ class QuestionController extends Controller
 
             $typeInter = $interaction->getType();
 
-            $nbResponses = 0;
-            $response = $em->getRepository('UJMExoBundle:Response')
-                ->findBy(array('interaction' => $interaction->getId()));
-            $nbResponses = count($response);
-
-            $linkedCategory = $this->container->get('ujm.exercise_services')->getLinkedCategories();
-
             if ($user->getId() != $interaction->getQuestion()->getUser()->getId()) {
                 $catID = $interaction->getQuestion()->getCategory()->getId();
             }
 
-            switch ($typeInter) {
-                case "InteractionQCM":
-
-                    $interactionQCM = $this->getDoctrine()
-                        ->getManager()
-                        ->getRepository('UJMExoBundle:InteractionQCM')
-                        ->getInteractionQCM($interaction->getId());
-                    //fired a sort function
-                    $interactionQCM[0]->sortChoices();
-
-                    if ($form == null) {
-                        $editForm = $this->createForm(
-                            new InteractionQCMType(
-                                $this->container->get('security.token_storage')
-                                    ->getToken()->getUser(), $catID
-                            ), $interactionQCM[0]
-                        );
-                    } else {
-                        $editForm = $form;
-                    }
-
-                    $typeQCM = $services->getTypeQCM();
-
-                    $variables['entity']         = $interactionQCM[0];
-                    $variables['edit_form']      = $editForm->createView();
-                    $variables['nbResponses']    = $nbResponses;
-                    $variables['linkedCategory'] = $linkedCategory;
-                    $variables['typeQCM'       ] = json_encode($typeQCM);
-                    $variables['exoID']          = $exoID;
-                    $variables['locker'] = $this->getLockCategory();
-
-                    if ($exoID != -1) {
-                        $exercise = $em->getRepository('UJMExoBundle:Exercise')->find($exoID);
-                        $variables['_resource'] = $exercise;
-                    }
-
-                    return $this->render('UJMExoBundle:InteractionQCM:edit.html.twig', $variables);
-
-                case "InteractionGraphic":
-                    $docID = -1;
-                    $interactionGraph = $this->getDoctrine()
-                        ->getManager()
-                        ->getRepository('UJMExoBundle:InteractionGraphic')
-                        ->getInteractionGraphic($interaction->getId());
-
-                    $position = $em->getRepository('UJMExoBundle:Coords')->findBy(
-                        array('interactionGraphic' => $interactionGraph[0]->getId()
-                        )
-                    );
-
-                    if ($user->getId() != $interactionGraph[0]->getInteraction()->getQuestion()->getUser()->getId()) {
-                        $docID = $interactionGraph[0]->getDocument()->getId();
-                    }
-
-                    $editForm = $this->createForm(
-                        new InteractionGraphicType(
-                            $this->container->get('security.token_storage')
-                                ->getToken()->getUser(), $catID, $docID
-                        ), $interactionGraph[0]
-                    );
-
-                    $variables['entity']         = $interactionGraph[0];
-                    $variables['edit_form']      = $editForm->createView();
-                    $variables['nbResponses']    = $nbResponses;
-                    $variables['linkedCategory'] = $linkedCategory;
-                    $variables['position']       = $position;
-                    $variables['exoID']          = $exoID;
-                    $variables['locker'] = $this->getLockCategory();
-
-                    if ($exoID != -1) {
-                        $exercise = $em->getRepository('UJMExoBundle:Exercise')->find($exoID);
-                        $variables['_resource'] = $exercise;
-                    }
-
-                    return $this->render('UJMExoBundle:InteractionGraphic:edit.html.twig', $variables);
-
-                case "InteractionHole":
-                    $interactionHole = $this->getDoctrine()
-                        ->getManager()
-                        ->getRepository('UJMExoBundle:InteractionHole')
-                        ->getInteractionHole($interaction->getId());
-
-                    $editForm = $this->createForm(
-                        new InteractionHoleType(
-                            $this->container->get('security.token_storage')
-                                ->getToken()->getUser(), $catID
-                        ), $interactionHole[0]
-                    );
-
-                    return $this->render(
-                        'UJMExoBundle:InteractionHole:edit.html.twig', array(
-                        'entity'      => $interactionHole[0],
-                        'edit_form'   => $editForm->createView(),
-                        'nbResponses' => $nbResponses,
-                        'linkedCategory' => $linkedCategory,
-                        'exoID' => $exoID,
-                        'locker' => $this->getLockCategory()
-                        )
-                    );
-
-                case "InteractionOpen":
-
-                    $interactionOpen = $this->getDoctrine()
-                        ->getManager()
-                        ->getRepository('UJMExoBundle:InteractionOpen')
-                        ->getInteractionOpen($interaction->getId());
-
-                    $editForm = $this->createForm(
-                        new InteractionOpenType(
-                            $this->container->get('security.token_storage')
-                                ->getToken()->getUser(), $catID
-                        ), $interactionOpen[0]
-                    );
-
-                    if ($exoID != -1) {
-                        $exercise = $em->getRepository('UJMExoBundle:Exercise')->find($exoID);
-                        $variables['_resource'] = $exercise;
-                    }
-
-                    $typeOpen = $services->getTypeOpen();
-
-                    $variables['entity']         = $interactionOpen[0];
-                    $variables['edit_form']      = $editForm->createView();
-                    $variables['nbResponses']    = $nbResponses;
-                    $variables['linkedCategory'] = $linkedCategory;
-                    $variables['typeOpen']       = json_encode($typeOpen);
-                    $variables['exoID']          = $exoID;
-                    $variables['locker'] = $this->getLockCategory();
-
-                    if ($exoID != -1) {
-                        $exercise = $em->getRepository('UJMExoBundle:Exercise')->find($exoID);
-                        $variables['_resource'] = $exercise;
-                    }
-
-                    return $this->render('UJMExoBundle:InteractionOpen:edit.html.twig', $variables);
-
-                case "InteractionMatching":
-
-                    $interactionMatching = $this->getDoctrine()
-                        ->getManager()
-                        ->getRepository('UJMExoBundle:InteractionMatching')
-                        ->getInteractionMatching($interaction->getId());
-
-                    $correspondence = $services->initTabRightResponse($interactionMatching[0]);
-                    foreach ($correspondence as $key => $corresp) {
-                        $correspondence[$key] = explode('-', $corresp);
-                    }
-                    $tableLabel =  array();
-                    $tableProposal = array();
-
-                    $ind = 1;
-
-                    foreach($interactionMatching[0]->getLabels() as $label){
-                        $tableLabel[$ind] = $label->getId();
-                        $ind++;
-                    }
-
-                    $ind = 1;
-                    foreach($interactionMatching[0]->getProposals() as $proposal){
-                        $tableProposal[$proposal->getId()] = $ind;
-                        $ind++;
-                    }
-
-                    $editForm = $this->createForm(
-                        new InteractionMatchingType(
-                            $this->container->get('security.token_storage')
-                                ->getToken()->getUser(),$catID
-                        ), $interactionMatching[0]
-                    );
-
-                    $typeMatching = $services->getTypeMatching();
-
-                    $variables['entity']         = $interactionMatching[0];
-                    $variables['edit_form']      = $editForm->createView();
-                    $variables['nbResponses']    = $nbResponses;
-                    $variables['linkedCategory'] = $linkedCategory;
-                    $variables['typeMatching']       = json_encode($typeMatching);
-                    $variables['exoID']          = $exoID;
-                    $variables['correspondence']  = json_encode($correspondence);
-                    $variables['tableLabel']     = json_encode($tableLabel);
-                    $variables['tableProposal']  = json_encode($tableProposal);
-                    $variables['locker']         = $this->getLockCategory();
-
-                    if ($exoID != -1) {
-                        $exercise = $em->getRepository('UJMExoBundle:Exercise')->find($exoID);
-                        $variables['_resource'] = $exercise;
-                    }
-
-                    return $this->render('UJMExoBundle:InteractionMatching:edit.html.twig', $variables);
-
-                    break;
-            }
+            return $this->forward(
+                        'UJMExoBundle:' . $typeInter . ':edit', array('interaction' => $interaction, 'exoID' => $exoID, 'catID' => $catID, 'user' => $user
+                            ));
         } else {
             return $this->redirect($this->generateUrl('ujm_question_index'));
         }
@@ -687,7 +407,7 @@ class QuestionController extends Controller
     public function deleteAction($id, $pageNow, $maxPage, $nbItem, $lastPage)
     {
         $em = $this->getDoctrine()->getManager();
-        $question = $this->container->get('ujm.exercise_services')->controlUserQuestion($id, $this->container, $em);
+        $question = $this->container->get('ujm.exo_question')->controlUserQuestion($id);
 
         if (count($question) > 0) {
 
@@ -716,74 +436,15 @@ class QuestionController extends Controller
                 $pageNow -= 1;
             }
 
-            switch ($typeInter) {
-                case "InteractionQCM":
-                    $interactionQCM = $this->getDoctrine()
-                        ->getManager()
-                        ->getRepository('UJMExoBundle:InteractionQCM')
-                        ->getInteractionQCM($interaction->getId());
+            $interSer  = $this->container->get('ujm.exo_' . $typeInter);
+            $interX    = $interSer->getInteractionX($interaction->getId());
 
-                    return $this->forward(
-                        'UJMExoBundle:InteractionQCM:delete', array(
-                            'id' => $interactionQCM[0]->getId(),
+            return $this->forward(
+                        'UJMExoBundle:' . $typeInter . ':delete', array(
+                            'id' => $interX->getId(),
                             'pageNow' => $pageNow
                         )
                     );
-
-                case "InteractionGraphic":
-                    $interactionGraph = $this->getDoctrine()
-                        ->getManager()
-                        ->getRepository('UJMExoBundle:InteractionGraphic')
-                        ->getInteractionGraphic($interaction->getId());
-
-                    return $this->forward(
-                        'UJMExoBundle:InteractionGraphic:delete', array(
-                            'id' => $interactionGraph[0]->getId(),
-                            'pageNow' => $pageNow
-                        )
-                    );
-
-                case "InteractionHole":
-                    $interactionHole = $this->getDoctrine()
-                        ->getManager()
-                        ->getRepository('UJMExoBundle:InteractionHole')
-                        ->getInteractionHole($interaction->getId());
-
-                    return $this->forward(
-                        'UJMExoBundle:InteractionHole:delete', array(
-                            'id' => $interactionHole[0]->getId(),
-                            'pageNow' => $pageNow
-                        )
-                    );
-
-                case "InteractionOpen":
-                    $interactionOpen = $this->getDoctrine()
-                    ->getManager()
-                    ->getRepository('UJMExoBundle:InteractionOpen')
-                    ->getInteractionOpen($interaction->getId());
-
-                    return $this->forward(
-                        'UJMExoBundle:InteractionOpen:delete', array(
-                            'id' => $interactionOpen[0]->getId(),
-                            'pageNow' => $pageNow
-                        )
-                    );
-
-                case "InteractionMatching":
-                    $interactionMatching = $this->getDoctrine()
-                    ->getManager()
-                    ->getRepository('UJMExoBundle:InteractionMatching')
-                    ->getInteractionMatching($interaction->getId());
-
-                    return $this->forward(
-                        'UJMExoBundle:InteractionMatching:delete', array(
-                            'id' => $interactionMatching[0]->getId(),
-                            'pageNow' => $pageNow
-                        )
-                    );
-
-                    break;
-            }
         }
     }
 
@@ -794,121 +455,18 @@ class QuestionController extends Controller
      *
      * @return \Symfony\Component\HttpFoundation\Response
      */
-    public function choixFormTypeAction()
+    public function formNewAction()
     {
-        $services = $this->container->get('ujm.exercise_services');
-        $request = $this->container->get('request');
+        $request  = $this->container->get('request');
 
         if ($request->isXmlHttpRequest()) {
-            $valType = 0;
 
             $valType = $request->request->get('indice_type');
-            $exoID = $request->request->get('exercise');
+            $exoID   = $request->request->get('exercise');
 
-            if ($valType != 0) {
-                //index 1 = Hole Question
-                if ($valType == 1) {
-                    $entity = new InteractionHole();
-                    $form   = $this->createForm(
-                        new InteractionHoleType(
-                            $this->container->get('security.token_storage')
-                                ->getToken()->getUser()
-                        ), $entity
+            return $this->forward(
+                       'UJMExoBundle:' . $valType . ':new', array('exoID' => $exoID)
                     );
-
-                    return $this->container->get('templating')->renderResponse(
-                        'UJMExoBundle:InteractionHole:new.html.twig', array(
-                        'exoID'  => $exoID,
-                        'entity' => $entity,
-                        'form'   => $form->createView()
-                        )
-                    );
-                }
-
-                //index 1 = QCM Question
-                if ($valType == 2) {
-                    $entity = new InteractionQCM();
-                    $form   = $this->createForm(
-                        new InteractionQCMType(
-                            $this->container->get('security.token_storage')
-                                ->getToken()->getUser()
-                        ), $entity
-                    );
-
-                    $typeQCM = $services->getTypeQCM();
-
-                    return $this->container->get('templating')->renderResponse(
-                        'UJMExoBundle:InteractionQCM:new.html.twig', array(
-                        'exoID'   => $exoID,
-                        'entity'  => $entity,
-                        'typeQCM' => json_encode($typeQCM),
-                        'form'    => $form->createView()
-                        )
-                    );
-                }
-
-                //index 1 = Graphic Question
-                if ($valType == 3) {
-                    $entity = new InteractionGraphic();
-                    $form   = $this->createForm(
-                        new InteractionGraphicType(
-                            $this->container->get('security.token_storage')
-                                ->getToken()->getUser()
-                        ), $entity
-                    );
-
-                    return $this->container->get('templating')->renderResponse(
-                        'UJMExoBundle:InteractionGraphic:new.html.twig', array(
-                        'exoID'  => $exoID,
-                        'entity' => $entity,
-                        'form'   => $form->createView()
-                        )
-                    );
-                }
-
-                //index 1 = Open Question
-                if ($valType == 4) {
-                    $entity = new InteractionOpen();
-                    $form   = $this->createForm(
-                        new InteractionOpenType(
-                            $this->container->get('security.token_storage')
-                                ->getToken()->getUser()
-                        ), $entity
-                    );
-
-                    $typeOpen = $services->getTypeOpen();
-
-                    return $this->container->get('templating')->renderResponse(
-                        'UJMExoBundle:InteractionOpen:new.html.twig', array(
-                        'exoID'    => $exoID,
-                        'entity'   => $entity,
-                        'typeOpen' => json_encode($typeOpen),
-                        'form'     => $form->createView()
-                        )
-                    );
-                }
-
-                if ($valType == 5) {
-                    $entity = new InteractionMatching();
-                    $form   = $this->createForm(
-                        new InteractionMatchingType(
-                            $this->container->get('security.token_storage')
-                                ->getToken()->getUser()
-                        ), $entity
-                    );
-
-                    $typeMatching = $services->getTypeMatching();
-
-                    return $this->container->get('templating')->renderResponse(
-                        'UJMExoBundle:InteractionMatching:new.html.twig', array(
-                        'exoID'    => $exoID,
-                        'entity'   => $entity,
-                        'typeMatching' => json_encode($typeMatching),
-                        'form'     => $form->createView()
-                        )
-                    );
-                }
-            }
         }
     }
 
@@ -1980,8 +1538,8 @@ class QuestionController extends Controller
         $user = $this->container->get('security.token_storage')->getToken()->getUser();
         $request = $this->get('request');
 
-        $services = $this->container->get('ujm.exercise_services');
-
+        $services = $this->container->get('ujm.exo_question');
+        
         $listInteractions = array();
         $actionQ = array();
         $questionWithResponse = array();
@@ -2010,12 +1568,13 @@ class QuestionController extends Controller
                 ->findOneBy(array('question' => $sharedQuestion[$i]->getQuestion()->getId()));
         }
 
-        $allActions = $services->getActionsAllQuestions($listInteractions, $user->getId(), $em);
+        $allActions = $services->getActionsAllQuestions($listInteractions, $user->getId());
 
         $actionQ = $allActions[0];
         $questionWithResponse = $allActions[1];
         $alreadyShared = $allActions[2];
         $shareRight = $allActions[4];
+        $interactionType = $this->container->get('ujm.exo_question')->getTypes();
 
         $listExo = $this->getDoctrine()
                     ->getManager()
@@ -2031,6 +1590,7 @@ class QuestionController extends Controller
         $vars['idExo']                = -1;
         $vars['displayAll']           = 0;
         $vars['QuestionsExo']         = 'true';
+        $vars['interactionType'] = $interactionType;
 
         if ($where == 'index') {
 
@@ -2067,10 +1627,9 @@ class QuestionController extends Controller
                             ->getManager()
                             ->getRepository('UJMExoBundle:Interaction')
                             ->find($interID);
-        $service = $this->container->get('ujm.exercise_services');
+        $service = $this->container->get('ujm.exo_question');
 
-        $em = $this->getDoctrine()->getManager();
-        $question = $service->controlUserQuestion($interaction->getQuestion()->getId(), $this->container, $em);
+        $question = $service->controlUserQuestion($interaction->getQuestion()->getId());
         $sharedQuestion = $service->controlUserSharedQuestion($interID);
 
         $allowToAccess = FALSE;
@@ -2078,7 +1637,7 @@ class QuestionController extends Controller
         if ($exoID != -1) {
             $exercise = $this->getDoctrine()->getManager()->getRepository('UJMExoBundle:Exercise')->find($exoID);
 
-            if ($this->container->get('ujm.exercise_services')
+            if ($this->container->get('ujm.exo_exercise')
                      ->isExerciseAdmin($exercise) === true) {
                 $allowToAccess = TRUE;
             }
@@ -2086,91 +1645,22 @@ class QuestionController extends Controller
         if (count($question) > 0 || count($sharedQuestion) > 0 || $allowToAccess === TRUE) {
 
             $typeInter = $interaction->getType();
+            $handlerType = '\UJM\ExoBundle\Form\\' . $typeInter . 'Handler';
 
-            switch ($typeInter) {
-                case "InteractionQCM":
-                    $interactionX = $this->getDoctrine()
-                        ->getManager()
-                        ->getRepository('UJMExoBundle:InteractionQCM')
-                        ->getInteractionQCM($interaction->getId());
+            $interSer        = $this->container->get('ujm.exo_' . $typeInter);
+            $interactionX    = $interSer->getInteractionX($interaction->getId());
 
-                    $interXHandler = new \UJM\ExoBundle\Form\InteractionQCMHandler(
+            $interXHandler = new $handlerType(
                         NULL , NULL, $this->getDoctrine()->getManager(),
-                        $this->container->get('ujm.exercise_services'),
+                        $this->container->get('ujm.exo_exercise'),
                         $this->container->get('security.token_storage')->getToken()->getUser(), $exercise,
                         $this->get('translator')
                     );
 
-                    break;
+            $interXHandler->singleDuplicateInter($interactionX);
 
-
-                case "InteractionGraphic":
-                    $interactionX = $this->getDoctrine()
-                        ->getManager()
-                        ->getRepository('UJMExoBundle:InteractionGraphic')
-                        ->getInteractionGraphic($interaction->getId());
-
-                    $interXHandler = new \UJM\ExoBundle\Form\InteractionGraphicHandler(
-                        NULL , NULL, $this->getDoctrine()->getManager(),
-                        $this->container->get('ujm.exercise_services'),
-                        $this->container->get('security.token_storage')->getToken()->getUser(), $exercise,
-                        $this->get('translator')
-                    );
-
-                    break;
-
-
-                case "InteractionHole":
-                    $interactionX = $this->getDoctrine()
-                        ->getManager()
-                        ->getRepository('UJMExoBundle:InteractionHole')
-                        ->getInteractionHole($interaction->getId());
-
-                    $interXHandler = new \UJM\ExoBundle\Form\InteractionHoleHandler(
-                        NULL , NULL, $this->getDoctrine()->getManager(),
-                        $this->container->get('ujm.exercise_services'),
-                        $this->container->get('security.token_storage')->getToken()->getUser(), $exercise,
-                        $this->get('translator')
-                    );
-
-                    break;
-
-
-                case "InteractionOpen":
-                    $interactionX = $this->getDoctrine()
-                    ->getManager()
-                    ->getRepository('UJMExoBundle:InteractionOpen')
-                    ->getInteractionOpen($interaction->getId());
-
-                    $interXHandler = new \UJM\ExoBundle\Form\InteractionOpenHandler(
-                        NULL , NULL, $this->getDoctrine()->getManager(),
-                        $this->container->get('ujm.exercise_services'),
-                        $this->container->get('security.token_storage')->getToken()->getUser(), $exercise,
-                        $this->get('translator')
-                    );
-
-                    break;
-
-                case "InteractionMatching":
-                    $interactionX = $this->getDoctrine()
-                    ->getManager()
-                    ->getRepository('UJMExoBundle:InteractionMatching')
-                    ->getInteractionMatching($interaction->getId());
-
-                    $interXHandler = new \UJM\ExoBundle\Form\InteractionMatchingHandler(
-                        NULL , NULL, $this->getDoctrine()->getManager(),
-                        $this->container->get('ujm.exercise_services'),
-                        $this->container->get('security.token_storage')->getToken()->getUser(), $exercise,
-                        $this->get('translator')
-                    );
-
-                    break;
-            }
-
-            $interXHandler->singleDuplicateInter($interactionX[0]);
-
-            $categoryToFind = $interactionX[0]->getInteraction()->getQuestion()->getCategory();
-            $titleToFind = $interactionX[0]->getInteraction()->getQuestion()->getTitle();
+            $categoryToFind = $interactionX->getInteraction()->getQuestion()->getCategory();
+            $titleToFind = $interactionX->getInteraction()->getQuestion()->getTitle();
 
             if ($exoID == -1) {
                 return $this->redirect(
@@ -2189,22 +1679,6 @@ class QuestionController extends Controller
             return $this->redirect($this->generateUrl('ujm_question_index'));
         }
 
-    }
-
-     /**
-     * Get the lock category
-     *
-     * @return the name of category locked
-     */
-    private function getLockCategory() {
-        $user = $this->container->get('security.token_storage')->getToken()->getUser()->getId();
-        $Locker = $this->getDoctrine()->getManager()->getRepository('UJMExoBundle:Category')->getCategoryLocker($user);
-        if (empty($Locker)) {
-            $catLocker = "";
-        } else {
-            $catLocker = $Locker[0];
-        }
-        return $catLocker;
     }
 
     /**
