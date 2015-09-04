@@ -56,7 +56,7 @@ abstract class qtiImport
         $elements = array();
         $imgs = $this->assessmentItem->getElementsByTagName('img');
         foreach ($imgs as $node){
-            $fileName = $node->getAttribute('src');echo $fileName.' ';
+            $fileName = $node->getAttribute('src');
             $extension = pathinfo($fileName, PATHINFO_EXTENSION);
 
             $objectTag = $this->assessmentItem->ownerDocument->createElement('object');
@@ -212,6 +212,20 @@ abstract class qtiImport
             } else if ($child->nodeName == 'a' || $child->nodeName == 'img') {
                 $desc .= $this->domElementToString($child);
                 $ib->removeChild($child);
+            }
+        }
+        foreach ($ib->getElementsByTagName("img") as $img) {
+            $node = $img->parentNode;
+            $i = 0;
+            while ($i == 0) {
+                if ( ($node->nodeName == 'itemBody') || ($node->nodeName == 'prompt') ) {
+                    $i++;
+                } else {
+                    $node = $node->parentNode;
+                }
+            }
+            if ( $node->nodeName == 'itemBody') {
+                $desc .= $this->domElementToString($img);
             }
         }
         $this->question->setDescription($desc);
