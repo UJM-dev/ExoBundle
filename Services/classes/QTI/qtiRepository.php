@@ -123,6 +123,7 @@ class qtiRepository {
      */
     public function scanFiles()
     {
+        $error = '';
         $xmlFileFound = false;
         if ($dh = opendir($this->getUserDir())) {
             while (($file = readdir($dh)) !== false) {
@@ -171,7 +172,7 @@ class qtiRepository {
                             $imported = $other[1];
                             if ($imported == false) {
 
-                                return 'qti_unsupported_format';
+                                $error .= $file . ' : qti_unsupported_format'."\n";
                             }
                         }
                         if ($this->exercise != null && $interX !== false) {
@@ -190,7 +191,11 @@ class qtiRepository {
 
         $this->removeDirectory();
 
-        return true;
+        if ($error == '') {
+            return true;
+        } else {
+            return $error;
+        }
     }
 
     /**
