@@ -2,10 +2,11 @@
 
 namespace UJM\ExoBundle\Entity;
 
+use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\ORM\Mapping as ORM;
 
 /**
- * UJM\ExoBundle\Entity\Interaction
+ * UJM\ExoBundle\Entity\Interaction.
  *
  * @ORM\Entity(repositoryClass="UJM\ExoBundle\Repository\InteractionRepository")
  * @ORM\Table(name="ujm_interaction")
@@ -13,7 +14,7 @@ use Doctrine\ORM\Mapping as ORM;
 class Interaction
 {
     /**
-     * @var integer $id
+     * @var int
      *
      * @ORM\Column(name="id", type="integer")
      * @ORM\Id
@@ -22,39 +23,39 @@ class Interaction
     private $id;
 
     /**
-     * @var string $type
+     * @var string
      *
      * @ORM\Column(name="type", type="string", length=255)
      */
     private $type;
 
     /**
-     * @var text $invite
+     * @var string
      *
      * @ORM\Column(name="invite", type="text")
      */
     private $invite;
 
     /**
-     * @var integer $ordre
+     * @var int
      *
      * @ORM\Column(name="ordre", type="integer", nullable=true)
      */
     private $ordre;
 
     /**
-     * @var text $feedBack
+     * @var string
      *
      * @ORM\Column(name="feedback", type="text", nullable=true)
      */
     private $feedBack;
 
     /**
-     * @var boolean $locked_expertise
+     * @var bool
      *
      * @ORM\Column(name="locked_expertise", type="boolean", nullable=true)
      */
-    private $lockedExpertise;
+    private $lockedExpertise = false;
 
     /**
      * @ORM\ManyToMany(targetEntity="UJM\ExoBundle\Entity\Document")
@@ -79,20 +80,19 @@ class Interaction
      */
     private $hints;
 
-     /**
-     * Constructs a new instance of Documents, hints
+    /**
+     * Constructs a new instance of Documents, hints.
      */
     public function __construct()
     {
-        $this->documents = new \Doctrine\Common\Collections\ArrayCollection;
-        $this->hints = new \Doctrine\Common\Collections\ArrayCollection;
-        $this->setLockedExpertise(false);
+        $this->documents = new ArrayCollection();
+        $this->hints = new ArrayCollection();
     }
 
     /**
-     * Get id
+     * Get id.
      *
-     * @return integer
+     * @return int
      */
     public function getId()
     {
@@ -100,7 +100,7 @@ class Interaction
     }
 
     /**
-     * Set type
+     * Set type.
      *
      * @param string $type
      */
@@ -110,7 +110,7 @@ class Interaction
     }
 
     /**
-     * Get type
+     * Get type.
      *
      * @return string
      */
@@ -120,7 +120,7 @@ class Interaction
     }
 
     /**
-     * Set invite
+     * Set invite.
      *
      * @param string $invite
      */
@@ -130,7 +130,7 @@ class Interaction
     }
 
     /**
-     * Get invite
+     * Get invite.
      *
      * @return text
      */
@@ -140,9 +140,9 @@ class Interaction
     }
 
     /**
-     * Set ordre
+     * Set ordre.
      *
-     * @param integer $ordre
+     * @param int $ordre
      */
     public function setOrdre($ordre)
     {
@@ -150,9 +150,9 @@ class Interaction
     }
 
     /**
-     * Get ordre
+     * Get ordre.
      *
-     * @return integer
+     * @return int
      */
     public function getOrdre()
     {
@@ -160,7 +160,7 @@ class Interaction
     }
 
     /**
-     * Set feedBack
+     * Set feedBack.
      *
      * @param text $feedBack
      */
@@ -170,7 +170,7 @@ class Interaction
     }
 
     /**
-     * Get feedBack
+     * Get feedBack.
      *
      * @return text
      */
@@ -180,9 +180,9 @@ class Interaction
     }
 
     /**
-     * Set locked_expertise
+     * Set locked_expertise.
      *
-     * @param boolean $lockedExpertise
+     * @param bool $lockedExpertise
      */
     public function setLockedExpertise($lockedExpertise)
     {
@@ -190,7 +190,7 @@ class Interaction
     }
 
     /**
-     * Get lockedExpertise
+     * Get lockedExpertise.
      */
     public function getLockedExpertise()
     {
@@ -208,7 +208,7 @@ class Interaction
     }
 
     /**
-     * Add $Document
+     * Add $Document.
      *
      * @param UJM\ExoBundle\Entity\Document $Document
      */
@@ -222,7 +222,7 @@ class Interaction
         return $this->question;
     }
 
-    public function setQuestion(\UJM\ExoBundle\Entity\Question $question)
+    public function setQuestion(Question $question)
     {
         $this->question = $question;
     }
@@ -232,7 +232,7 @@ class Interaction
         return $this->hints;
     }
 
-    public function addHint(\UJM\ExoBundle\Entity\Hint $hint)
+    public function addHint(Hint $hint)
     {
         $this->hints[] = $hint;
         //le choix est bien lié à l'entité interactionqcm, mais dans l'entité choice il faut
@@ -255,21 +255,21 @@ class Interaction
         }
     }
 
-    public function __clone() {
+    public function __clone()
+    {
         if ($this->id) {
             $this->id = null;
 
             $this->question = clone $this->question;
             $this->question->setModel(0);
 
-            $newHints = new \Doctrine\Common\Collections\ArrayCollection;
+            $newHints = new \Doctrine\Common\Collections\ArrayCollection();
             foreach ($this->hints as $hint) {
                 $newHint = clone $hint;
                 $newHint->setInteraction($this);
                 $newHints->add($newHint);
             }
             $this->hints = $newHints;
-
         }
     }
 }

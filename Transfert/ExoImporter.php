@@ -28,7 +28,7 @@ class ExoImporter extends Importer implements ConfigurationInterface
 {
     private $container;
     private $om;
-    private $new = TRUE;
+    private $new = true;
 
     /**
      * @DI\InjectParams({
@@ -42,7 +42,7 @@ class ExoImporter extends Importer implements ConfigurationInterface
         $this->om = $om;
     }
 
-    public function  getConfigTreeBuilder()
+    public function getConfigTreeBuilder()
     {
         $treeBuilder = new TreeBuilder();
         $rootNode = $treeBuilder->root('data');
@@ -87,7 +87,7 @@ class ExoImporter extends Importer implements ConfigurationInterface
         $exoPath = $data['data'][0]['file']['path'];
         $exoTitle = $data['data'][0]['file']['title'];
 
-        $qtiRepos = $this->container->get('ujm.qti_repository');
+        $qtiRepos = $this->container->get('ujm.exo_qti_repository');
         $qtiRepos->razValues();
         $newExercise = $this->createExo($exoTitle, $qtiRepos->getQtiUser());
 
@@ -97,19 +97,19 @@ class ExoImporter extends Importer implements ConfigurationInterface
             while (($question = readdir($questions)) !== false) {
                 if ($question != '.' && $question != '..') {
                     $questionFiles[] = $rootPath.'/'.$exoPath.'/'.$question;
-               }
-           }
-           sort($questionFiles);
-           foreach ($questionFiles as $question) {
-               $qtiRepos->createDirQTI();
-               $files = opendir($question);
-               while (($file = readdir($files)) !== false) {
-                   if ($file != '.' && $file != '..') {
-                       copy($question.'/'.$file, $qtiRepos->getUserDir().$file);
-                   }
-               }
-               $qtiRepos->scanFilesToImport($newExercise);
-           }
+                }
+            }
+            sort($questionFiles);
+            foreach ($questionFiles as $question) {
+                $qtiRepos->createDirQTI();
+                $files = opendir($question);
+                while (($file = readdir($files)) !== false) {
+                    if ($file != '.' && $file != '..') {
+                        copy($question.'/'.$file, $qtiRepos->getUserDir().$file);
+                    }
+                }
+                $qtiRepos->scanFilesToImport($newExercise);
+            }
         }
         $this->om->endFlushSuite();
         $this->om->forceFlush();
@@ -121,16 +121,15 @@ class ExoImporter extends Importer implements ConfigurationInterface
     public function export(Workspace $workspace, array &$files, $object)
     {
         $exoTitle = hash('sha1', $object->getTitle());
-        $qtiRepos = $this->container->get('ujm.qti_repository');
+        $qtiRepos = $this->container->get('ujm.exo_qti_repository');
         $qtiRepos->createDirQTI($exoTitle, $this->new);
-        $this->new = FALSE;
-        $qtiServ = $this->container->get('ujm.qti_services');
+        $this->new = false;
+        $qtiServ = $this->container->get('ujm.exo_qti');
 
         $interRepos = $this->om->getRepository('UJMExoBundle:Interaction');
         $interactions = $interRepos->getExerciseInteraction(
                 $this->container->get('doctrine')->getManager(),
-                $object->getId(), FALSE);
-
+                $object->getId(), false);
 
         $this->createQuestionsDirectory($qtiRepos, $interactions);
         $qdirs = $qtiServ->sortPathOfQuestions($qtiRepos);
@@ -138,13 +137,13 @@ class ExoImporter extends Importer implements ConfigurationInterface
         $i = 'a';
         foreach ($qdirs as $dir) {
             $iterator = new \DirectoryIterator($dir);
-                foreach ($iterator as $element) {
-                    if (!$element->isDot() && $element->isFile()) {
-                        $localPath = 'qti/'.$exoTitle.'/question_'.$i.'/'.$element->getFileName();
-                        $files[$localPath] = $element->getPathName();
-                    }
+            foreach ($iterator as $element) {
+                if (!$element->isDot() && $element->isFile()) {
+                    $localPath = 'qti/'.$exoTitle.'/question_'.$i.'/'.$element->getFileName();
+                    $files[$localPath] = $element->getPathName();
                 }
-                $i .='a';
+            }
+            $i .= 'a';
         }
 
         $version = '1';
@@ -152,8 +151,8 @@ class ExoImporter extends Importer implements ConfigurationInterface
 
         $data = array(array('file' => array(
             'path' => $path,
-            'version' =>  $version,
-            'title'   => $object->getTitle()
+            'version' => $version,
+            'title' => $object->getTitle(),
         )));
 
         return $data;
@@ -163,29 +162,26 @@ class ExoImporter extends Importer implements ConfigurationInterface
     {
         $ds = DIRECTORY_SEPARATOR;
 
-        return !file_exists($rootpath . $ds . $v);;
+        return !file_exists($rootpath.$ds.$v);
     }
 
     /**
-     * create the exercise
+     * create the exercise.
      *
-     * @param String $title
+     * @param String      $title
      * @param Object User $user
      */
-    private function createExo($title, $user) {
+    private function createExo($title, $user)
+    {
         $newExercise = new Exercise();
         $newExercise->setTitle($title);
-        $newExercise->setDateCreate(new \Datetime());
         $newExercise->setNbQuestionPage(1);
         $newExercise->setNbQuestion(0);
         $newExercise->setDuration(0);
         $newExercise->setMaxAttempts(0);
-        $newExercise->setStartDate(new \Datetime());
-        $newExercise->setEndDate(new \Datetime());
         $newExercise->setDateCorrection(new \Datetime());
         $newExercise->setCorrectionMode('1');
         $newExercise->setMarkMode('1');
-        $newExercise->setPublished(FALSE);
         $this->om->persist($newExercise);
         $this->om->flush();
 
@@ -200,12 +196,13 @@ class ExoImporter extends Importer implements ConfigurationInterface
     }
 
     /**
-     * create the directory questions to export an exercise and export the qti files
+     * create the directory questions to export an exercise and export the qti files.
      *
      * @param UJM\ExoBundle\Services\classes\QTI\qtiRepository $qtiRepos
-     * @param collection of  UJM\ExoBundle\Entity\Interaction $interactions
+     * @param collection of  UJM\ExoBundle\Entity\Interaction  $interactions
      */
-    private function createQuestionsDirectory($qtiRepos, $interactions) {
+    private function createQuestionsDirectory($qtiRepos, $interactions)
+    {
         @mkdir($qtiRepos->getUserDir().'questions');
         $i = 'a';
         foreach ($interactions as $interaction) {
@@ -217,7 +214,7 @@ class ExoImporter extends Importer implements ConfigurationInterface
                     rename($qtiRepos->getUserDir().$element->getFilename(), $qtiRepos->getUserDir().'questions/'.'question_'.$i.'/'.$element->getFilename());
                 }
             }
-            $i .='a';
+            $i .= 'a';
         }
     }
 }

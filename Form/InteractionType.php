@@ -5,12 +5,10 @@ namespace UJM\ExoBundle\Form;
 use Symfony\Component\Form\AbstractType;
 use Symfony\Component\Form\FormBuilderInterface;
 use Symfony\Component\OptionsResolver\OptionsResolver;
-
 use Claroline\CoreBundle\Entity\User;
 
 class InteractionType extends AbstractType
 {
-
     private $user;
     private $catID;
 
@@ -31,29 +29,29 @@ class InteractionType extends AbstractType
             ->add('invite', 'tinymce', array(
                     'attr' => array('data-new-tab' => 'yes'),
                     'label' => 'question',
-                    'attr'  => array('placeholder' => 'question'),
-                    'required' => false
+                    'attr' => array('placeholder' => 'question'),
+                    'required' => false,
                 )
             )
             ->add(
                 'ordre', 'hidden', array(
-                    'required' => false
+                    'required' => false,
                 )
             )
             ->add('feedBack', 'tinymce', array(
                     //for automatically open documents in a new tab for all tinymce field
                     'attr' => array('data-new-tab' => 'yes', 'placeholder' => 'interaction_feedback'),
-                    'label' => 'interaction_feedback', 'required' => false
+                    'label' => 'interaction_feedback', 'required' => false,
                 )
             )
             //->add('locked_expertise', 'checkbox', array('required' => false))
             //->add('documents')
             ->add(
                 'hints', 'collection', array(
-                    'type' => new HintType,
+                    'type' => new HintType(),
                     'prototype' => true,
                     'allow_add' => true,
-                    'allow_delete' => true
+                    'allow_delete' => true,
                 )
             );
     }
@@ -63,7 +61,8 @@ class InteractionType extends AbstractType
         $resolver->setDefaults(
             array(
                 'data_class' => 'UJM\ExoBundle\Entity\Interaction',
-                'cascade_validation' => true
+                'cascade_validation' => true,
+                'translation_domain' => 'ujm_exo',
             )
         );
     }
@@ -72,5 +71,4 @@ class InteractionType extends AbstractType
     {
         return 'ujm_exobundle_interactiontype';
     }
-
 }
