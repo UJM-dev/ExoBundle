@@ -2,13 +2,11 @@
 
 namespace UJM\ExoBundle\Entity;
 
-
 use Claroline\CoreBundle\Entity\Resource\AbstractResource;
-use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\ORM\Mapping as ORM;
 
 /**
- * UJM\ExoBundle\Entity\Exercise
+ * UJM\ExoBundle\Entity\Exercise.
  *
  * @ORM\Entity(repositoryClass="UJM\ExoBundle\Repository\ExerciseRepository")
  * @ORM\Table(name="ujm_exercise")
@@ -16,43 +14,42 @@ use Doctrine\ORM\Mapping as ORM;
 class Exercise extends AbstractResource
 {
     /**
-     * @var string $title
+     * @var string
      *
      * @ORM\Column(name="title", type="string", length=255)
      */
     private $title;
 
     /**
-     * @var string $description
+     * @var string
      *
      * @ORM\Column(name="description", type="text", nullable=true)
      */
     private $description;
 
     /**
-     * @var boolean $shuffle
+     * @var bool
      *
      * @ORM\Column(name="shuffle", type="boolean", nullable=true)
      */
     private $shuffle = false;
 
     /**
-     * @var integer $nbQuestion
+     * @var int
      *
      * @ORM\Column(name="nb_question", type="integer")
      */
     private $nbQuestion = 0;
 
     /**
-     * @var boolean $keepSameQuestion
+     * @var bool
      *
      * @ORM\Column(name="keepSameQuestion", type="boolean", nullable=true)
      */
     private $keepSameQuestion;
-   
 
     /**
-     * @var integer $duration
+     * @var int
      *
      * @ORM\Column(name="duration", type="integer")
      */
@@ -66,7 +63,7 @@ class Exercise extends AbstractResource
     private $doprint = false;
 
     /**
-     * @var integer $maxAttempts
+     * @var int
      *
      * @ORM\Column(name="max_attempts", type="integer")
      */
@@ -75,14 +72,14 @@ class Exercise extends AbstractResource
     /**
      * @todo mode should be at least a class constant
      *
-     * @var string $correctionMode
+     * @var string
      *
      * @ORM\Column(name="correction_mode", type="string", length=255)
      */
     private $correctionMode = '1';
 
     /**
-     * @var \Datetime $dateCorrection
+     * @var \Datetime
      *
      * @ORM\Column(name="date_correction", type="datetime", nullable=true)
      */
@@ -91,21 +88,21 @@ class Exercise extends AbstractResource
     /**
      * @todo mode should be at least a class constant
      *
-     * @var string $markMode
+     * @var string
      *
      * @ORM\Column(name="mark_mode", type="string", length=255)
      */
-    private $markMode = '1';   
+    private $markMode = '1';
 
     /**
-     * @var boolean $dispButtonInterrupt
+     * @var bool
      *
      * @ORM\Column(name="disp_button_interrupt", type="boolean", nullable=true)
      */
     private $dispButtonInterrupt = false;
 
     /**
-     * @var boolean $lockAttempt
+     * @var bool
      *
      * @ORM\Column(name="lock_attempt", type="boolean", nullable=true)
      */
@@ -129,7 +126,7 @@ class Exercise extends AbstractResource
      * one time. An exercise that has never been published has all its
      * existing papers deleted at the first publication.
      *
-     * @var boolean $waPublishedOnce
+     * @var bool
      *
      * @ORM\Column(name="published", type="boolean")
      */
@@ -137,14 +134,14 @@ class Exercise extends AbstractResource
 
     public function __construct()
     {
-        $this->groupes = new \Doctrine\Common\Collections\ArrayCollection;
+        $this->groupes = new \Doctrine\Common\Collections\ArrayCollection();
         $this->dateCorrection = new \DateTime();
     }
 
     /**
-     * Get id
+     * Get id.
      *
-     * @return integer
+     * @return int
      */
     public function getId()
     {
@@ -152,7 +149,7 @@ class Exercise extends AbstractResource
     }
 
     /**
-     * Set title
+     * Set title.
      *
      * @param string $title
      */
@@ -162,7 +159,7 @@ class Exercise extends AbstractResource
     }
 
     /**
-     * Get title
+     * Get title.
      *
      * @return string
      */
@@ -172,7 +169,7 @@ class Exercise extends AbstractResource
     }
 
     /**
-     * Set description
+     * Set description.
      *
      * @param string $description
      */
@@ -182,7 +179,7 @@ class Exercise extends AbstractResource
     }
 
     /**
-     * Get description
+     * Get description.
      *
      * @return string
      */
@@ -192,9 +189,9 @@ class Exercise extends AbstractResource
     }
 
     /**
-     * Set shuffle
+     * Set shuffle.
      *
-     * @param boolean $shuffle
+     * @param bool $shuffle
      */
     public function setShuffle($shuffle)
     {
@@ -202,7 +199,7 @@ class Exercise extends AbstractResource
     }
 
     /**
-     * Get shuffle
+     * Get shuffle.
      */
     public function getShuffle()
     {
@@ -210,9 +207,9 @@ class Exercise extends AbstractResource
     }
 
     /**
-     * Set nbQuestion
+     * Set nbQuestion.
      *
-     * @param integer $nbQuestion
+     * @param int $nbQuestion
      */
     public function setNbQuestion($nbQuestion)
     {
@@ -220,9 +217,9 @@ class Exercise extends AbstractResource
     }
 
     /**
-     * Get nbQuestion
+     * Get nbQuestion.
      *
-     * @return integer
+     * @return int
      */
     public function getNbQuestion()
     {
@@ -230,9 +227,9 @@ class Exercise extends AbstractResource
     }
 
     /**
-     * Set keepSameQuestion
+     * Set keepSameQuestion.
      *
-     * @param boolean $keepSameQuestion
+     * @param bool $keepSameQuestion
      */
     public function setKeepSameQuestion($keepSameQuestion)
     {
@@ -240,7 +237,7 @@ class Exercise extends AbstractResource
     }
 
     /**
-     * Get keepSameQuestion
+     * Get keepSameQuestion.
      */
     public function getKeepSameQuestion()
     {
@@ -248,9 +245,9 @@ class Exercise extends AbstractResource
     }
 
     /**
-     * Set duration
+     * Set duration.
      *
-     * @param integer $duration
+     * @param int $duration
      */
     public function setDuration($duration)
     {
@@ -258,9 +255,9 @@ class Exercise extends AbstractResource
     }
 
     /**
-     * Get duration
+     * Get duration.
      *
-     * @return integer
+     * @return int
      */
     public function getDuration()
     {
@@ -268,9 +265,7 @@ class Exercise extends AbstractResource
     }
 
     /**
-     * Set doprint
-     *
-     * @param boolean $doprint
+     * @param bool $doprint
      */
     public function setDoprint($doprint)
     {
@@ -278,7 +273,7 @@ class Exercise extends AbstractResource
     }
 
     /**
-     * Get doprint
+     * Get doprint.
      */
     public function getDoprint()
     {
@@ -286,9 +281,9 @@ class Exercise extends AbstractResource
     }
 
     /**
-     * Set maxAttempts
+     * Set maxAttempts.
      *
-     * @param integer $maxAttempts
+     * @param int $maxAttempts
      */
     public function setMaxAttempts($maxAttempts)
     {
@@ -296,9 +291,9 @@ class Exercise extends AbstractResource
     }
 
     /**
-     * Get maxAttempts
+     * Get maxAttempts.
      *
-     * @return integer
+     * @return int
      */
     public function getMaxAttempts()
     {
@@ -306,7 +301,7 @@ class Exercise extends AbstractResource
     }
 
     /**
-     * Set correctionMode
+     * Set correctionMode.
      *
      * @param string $correctionMode
      */
@@ -316,7 +311,7 @@ class Exercise extends AbstractResource
     }
 
     /**
-     * Get correctionMode
+     * Get correctionMode.
      *
      * @return string
      */
@@ -326,7 +321,7 @@ class Exercise extends AbstractResource
     }
 
     /**
-     * Set dateCorrection
+     * Set dateCorrection.
      *
      * @param \Datetime $dateCorrection
      */
@@ -336,7 +331,7 @@ class Exercise extends AbstractResource
     }
 
     /**
-     * Get dateCorrection
+     * Get dateCorrection.
      *
      * @return \Datetime
      */
@@ -346,7 +341,7 @@ class Exercise extends AbstractResource
     }
 
     /**
-     * Set markMode
+     * Set markMode.
      *
      * @param string $markMode
      */
@@ -356,7 +351,7 @@ class Exercise extends AbstractResource
     }
 
     /**
-     * Get markMode
+     * Get markMode.
      *
      * @return string
      */
@@ -366,9 +361,9 @@ class Exercise extends AbstractResource
     }
 
     /**
-     * Set dispButtonInterrupt
+     * Set dispButtonInterrupt.
      *
-     * @param boolean $dispButtonInterrupt
+     * @param bool $dispButtonInterrupt
      */
     public function setDispButtonInterrupt($dispButtonInterrupt)
     {
@@ -376,7 +371,7 @@ class Exercise extends AbstractResource
     }
 
     /**
-     * Get dispButtonInterrupt
+     * Get dispButtonInterrupt.
      */
     public function getDispButtonInterrupt()
     {
@@ -384,9 +379,9 @@ class Exercise extends AbstractResource
     }
 
     /**
-     * Set lockAttempt
+     * Set lockAttempt.
      *
-     * @param boolean $lockAttempt
+     * @param bool $lockAttempt
      */
     public function setLockAttempt($lockAttempt)
     {
@@ -394,7 +389,7 @@ class Exercise extends AbstractResource
     }
 
     /**
-     * Get lockAttempt
+     * Get lockAttempt.
      */
     public function getLockAttempt()
     {
@@ -412,7 +407,7 @@ class Exercise extends AbstractResource
     }
 
     /**
-     * Add Groupe
+     * Add Groupe.
      *
      * @param UJM\ExoBundle\Entity\Groupes $Groupe
      */
@@ -427,7 +422,7 @@ class Exercise extends AbstractResource
     }
 
     /**
-     * @return boolean
+     * @return bool
      */
     public function wasPublishedOnce()
     {
@@ -435,7 +430,7 @@ class Exercise extends AbstractResource
     }
 
     /**
-     * @param boolean $wasPublishedOnce
+     * @param bool $wasPublishedOnce
      */
     public function setPublishedOnce($wasPublishedOnce)
     {
