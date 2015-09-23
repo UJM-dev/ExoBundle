@@ -102,7 +102,7 @@ class graphicImport extends qtiImport {
      */
     protected function createPicture($objectTag) {
         $user    = $this->container->get('security.token_storage')->getToken()->getUser();
-        $userDir = './uploads/ujmexo/users_documents/'.$user->getUsername();
+        $userDir = $this->container->getParameter('claroline.param.uploads_directory') . '/ujmexo/users_documents/'.$user->getUsername();
         $picName = $this->cpPicture($objectTag->getAttribute('data'), $userDir);
 
         $document = new Document();
