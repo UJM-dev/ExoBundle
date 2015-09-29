@@ -35,7 +35,7 @@
                             <input class="form-control" type="text" id="search-user-txt" placeholder="{{ 'search'|trans({}, 'platform') }}"
                                 onkeydown="if (event.keyCode == 13) { search_user_ajax('{{ path('ujm_question_share_search_user') }}', 1);return false; }">
                             <span class="input-group-btn">
-                                <button class="btn btn-default" type="button" id="search-user-button" onClick="search_user_ajax('{{ path('ujm_question_share_search_user') }}', 1)">
+                                <button class="btn btn-default" type="button" id="search-user-button" onClick="search_user_ajax('{{ path('ujm_question_share_search_user') }}', 1);">
                                     <i class="fa fa-search"></i>
                                 </button>
                             </span>
