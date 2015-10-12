@@ -117,7 +117,7 @@ doc_manage: Manage my documents
 document: Document
 drop_category: Drop this category
 duplicate: Duplicate
-duplicate_this_question: <input type ="text" name='nbq' value='0' size='2' /> time this question (10 maximum allowed)
+duplicate_this_question: time this question (9 maximum allowed)
 duration: Duration
 
 # E
