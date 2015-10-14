@@ -160,7 +160,7 @@ class ExerciseListener extends ContainerAware
 
     public function onCopy(CopyResourceEvent $event)
     {
-        $em = $this->container->get('doctrine.orm.entity_manager');
+        $em = $this->container->get('claroline.persistence.object_manager');
         $resource = $event->getResource();
 
         $exerciseToCopy = $em->getRepository('UJMExoBundle:Exercise')->find($resource->getId());
