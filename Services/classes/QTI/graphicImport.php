@@ -108,7 +108,7 @@ class graphicImport extends qtiImport {
         $document = new Document();
         $document->setLabel($objectTag->nodeValue);
         $document->setType($objectTag->getAttribute('type'));
-        $document->setUrl($userDir.'/images/'.$picName);
+        $document->setUrl('./uploads/ujmexo/users_documents/'.$user->getUsername().'/images/'.$picName);
         $document->setUser($user);
 
         $this->om->persist($document);
