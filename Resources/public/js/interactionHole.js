@@ -95,7 +95,7 @@ function addFormHoleEdit(response, size, orthography, del, selector, source_imag
             e.preventDefault(); // prevent add # in the url
             return false;
         });
-
+        var indWR = 0;
         $('#newTable').find('.trHole:last').find('td:last').find('input').each(function () {
             //i = nb input found, 3 input per row (response, point, caseSensitive)
             if (i == 0) {
@@ -108,7 +108,23 @@ function addFormHoleEdit(response, size, orthography, del, selector, source_imag
             $('#tabWR_' + index).find('tr:last').append('<td class="classic"></td>');
             $(this).appendTo($('#tabWR_' + index).find('tr:last').find('td:last'));
             i++;
-            
+            if(i > 2){
+            var indexHole=index-1;
+            var feedback = 'ujm_exobundle_interactionholetype_holes_' + indexHole + '_wordResponses_' + indWR +'_feedback';
+            $('#tabWR_' + index).find('tr:last').append('<td class="classic" style="width:400px;">\n\
+                                                                    <a class="btn btn-default" \n\
+                                                                       title="'+langComment+'" id="btn_' + feedback + '" \n\
+                                                                       onClick="addTextareaFeedback(\'span_' + feedback+ '\',\'btn_' + feedback + '\')" >\n\
+                                                                       <i class="fa fa-comments-o"></i>\n\
+                                                                    </a><span id="span_' + feedback + '" class="input-group" style="display:none;"></span></td>');
+            $('#span_' + feedback).append($('#'+feedback));
+            $('#span_' + feedback).append('<span class="input-group-btn">\n\
+                                                <a class="btn btn-default" id="btnEdition_' + feedback + '" \n\
+                                                   onClick="advancedEdition(\'ujm_exobundle_interactionholetype_holes_' + indexHole + '_wordResponses_' + indWR + '_feedback\',\'btnEdition_' + feedback + '\',event);" \n\
+                                                   title="' + langEdition + '">\n\
+                                                   <i class="fa fa-font"></i></a></span>');
+             indWR++;
+            }
             //add buton delete for a key word
             if ( (nbResponses == 0) && (i > 2) && ($('#tabWR_' + index).find('.trWR').length > 1)) {
                 $('#tabWR_' + index).find('tr:last').append('<td class="classic"></td>');
@@ -127,8 +143,8 @@ function addFormHoleEdit(response, size, orthography, del, selector, source_imag
             }
 
         });
+        textareaAdvancedEdition();
         //***************************
-
         if (nbResponses == 0) {
             $('#newTable').find('.trHole:last')
                 .append('<td class="classic"><a id="hole_' + index + '" href="#" class="btn btn-danger">' + langDel + '</a></td>'
@@ -356,7 +372,7 @@ function addWR(indexHole, idTabWR) {
             $('#tabWR_'+idTabWR).find('td:last').append($(this).find('input'));
         }     
         //Add the field of type textarea feedback
-      //  addFeedback($(this),indexHole,idTabWR);   
+        addFeedback($(this),indexHole,idTabWR,indexWR);   
     });
 
     if (indexWR > 0) {
@@ -459,17 +475,19 @@ function disableNotYetReady() {
  * @param {type} row
  * @param {type} indexHole
  * @param {type} idTabWR
+ * @param {type} indexWR Index Word Reponse
  */
-function addFeedback(row,indexHole,idTabWR)
+function addFeedback(row,indexHole,idTabWR,indexWR)
 {
      //Add the field of type textarea feedback
         if (row.find('*[id$="_feedback"]').length) {
-       
-            var idFeedbackVal = row.find('textarea').attr("id");
+            if (row.find('*[id$="_feedback"]').length) {      
+            var idFeedbackVal = 'ujm_exobundle_interactionholetype_holes_' + indexHole + '_wordResponses_' + indexWR +'_feedback';
             //Adds a cell array with a comment button
-            $('#tabWR_' + idTabWR).find('tr:last').append('<td class="classic"><a class="btn btn-default" title="'+langComment+'" id="btn_' + idFeedbackVal + '" onClick="addTextareaFeedback(\'span_' + idFeedbackVal + '\',\'btn_' + idFeedbackVal + '\')" ><i class="fa fa-comments-o"></i></a><span id="span_' + idFeedbackVal + '" class="input-group" style="display:none;"></span></td>');
+            $('#tabWR_' + idTabWR).find('tr:last').append('<td class="classic" style="width:400px;"><a class="btn btn-default" title="'+langComment+'" id="btn_' + idFeedbackVal + '" onClick="addTextareaFeedback(\'span_' + idFeedbackVal + '\',\'btn_' + idFeedbackVal + '\')" ><i class="fa fa-comments-o"></i></a><span id="span_' + idFeedbackVal + '" class="input-group" style="display:none;"></span></td>');
             //Adds the textarea and its advanced edition button (hidden by default)
             $('#span_' + idFeedbackVal).append(row.find('*[id$="_feedback"]'));
             $('#span_' + idFeedbackVal).append('<span class="input-group-btn"><a class="btn btn-default" id="btnEdition_' + idFeedbackVal + '" onClick="advancedEdition(\'ujm_exobundle_interactionholetype_holes_' + indexHole + '_wordResponses_' + indexWR + '_feedback\',\'btnEdition_' + idFeedbackVal + '\',event);" title="' + langEdition + '"><i class="fa fa-font"></i></a></span>');
         }   
+    }
 }
