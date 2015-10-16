@@ -18,7 +18,7 @@ var langDel;
 var langComment;
 var langEdition;
 
-function addFormHole( response, size, orthography, del, selector, source_image_add, wlangKeyWord, wlangPoint,comment,edition) {
+function addFormHole(response, size, orthography, del, selector, wlangKeyWord, wlangPoint,comment,edition) {
     langKeyWord = wlangKeyWord;
     langPoint   = wlangPoint;
     langDel     = '<i class="fa fa-close"></i>';
@@ -33,7 +33,7 @@ function addFormHole( response, size, orthography, del, selector, source_image_a
 
 }
 
-function addFormHoleEdit(response, size, orthography, del, selector, source_image_add, wlangKeyWord, wlangPoint, nbResponses,comment,edition) {
+function addFormHoleEdit(response, size, orthography, del, selector, wlangKeyWord, wlangPoint, nbResponses,comment,edition) {
     langKeyWord = wlangKeyWord;
     langPoint   = wlangPoint;
     langDel     = '<i class="fa fa-close"></i>';
