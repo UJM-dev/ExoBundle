@@ -237,18 +237,21 @@ class QtiController extends Controller {
     public function ExportAction($id)
     {
         $em = $this->getDoctrine()->getManager();
-        $question = $this->container->get('ujm.exercise_services')->controlUserQuestion($id, $this->container, $em);
+        $service = $this->container->get('ujm.exercise_services');
+        $question = $service->controlUserQuestion($id, $this->container, $em);
+        $sharedQuestions = $service->controlUserSharedQuestion($id);
 
         $qtiRepos = $this->container->get('ujm.qti_repository');
         $qtiRepos->createDirQTI();
 
-        if (count($question) > 0) {
+        if (count($question) > 0 || count($sharedQuestions) > 0) {
             $interaction = $em->getRepository('UJMExoBundle:Interaction')
-                              ->getInteraction($id);
+                    ->getInteraction($id);
             $export = $qtiRepos->export($interaction);
+            return $export;
+        } else {
+            return $this->redirect($this->generateUrl('ujm_question_index'));
         }
-
-        return $export;
     }
 
     /**
