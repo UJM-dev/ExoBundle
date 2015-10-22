@@ -117,7 +117,17 @@ class graphicExport extends qtiExport
             $areaMapEntry->setAttribute("shape", $c->getShape());
             $areaMapEntry->setAttribute("coords",$xy[0].",".$xy[1].",".$xy[2]);
             $areaMapEntry->setAttribute("mappedValue", $c->getScoreCoords());
+            $areaMapEntry->setAttribute('color', $c->getColor());
             $areaMapping->appendChild($areaMapEntry);
+            if (($c->getFeedback() != Null) && ($c->getFeedback() != "")) {
+                $feedbackInline = $this->document->CreateElement('feedbackInline');
+                $feedbackInline->setAttribute("outcomeIdentifier", "FEEDBACK");
+                $feedbackInline->setAttribute("identifier", "Choice" . $c->getId());
+                $feedbackInline->setAttribute("showHide", "show");
+                $feedbackInlinetxt = $this->document->CreateTextNode($c->getFeedback());
+                $feedbackInline->appendChild($feedbackInlinetxt);
+                $areaMapEntry->appendChild($feedbackInline);
+            }
         }
     }
 

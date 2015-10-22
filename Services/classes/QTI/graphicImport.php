@@ -80,13 +80,23 @@ class graphicImport extends qtiImport {
             foreach ($am->getElementsByTagName("areaMapEntry") as $areaMapEntry) {
                 $tabCoords = explode(',', $areaMapEntry->getAttribute('coords'));
                 $coords = new Coords();
+                $feedback = $areaMapEntry->getElementsByTagName("feedbackInline");
+                if ($feedback->item(0)) {
+                    $coords->setFeedback($feedback->item(0)->nodeValue);
+                    $areaMapEntry->removeChild($feedback->item(0));
+                }
                 $x = $tabCoords[0] - $tabCoords[2];
                 $y = $tabCoords[1] - $tabCoords[2];
                 $coords->setValue($x.','.$y);
                 $coords->setSize($tabCoords[2] * 2);
                 $coords->setShape($areaMapEntry->getAttribute('shape'));
                 $coords->setScoreCoords($areaMapEntry->getAttribute('mappedValue'));
-                $coords->setColor('white');
+                            $color = $areaMapEntry->getAttribute('color');
+                if ($color === '') {
+                    $coords->setColor('black');
+                } else {
+                    $coords->setColor($color);
+                }
                 $coords->setInteractionGraphic($this->interactionGraph);
                 $this->om->persist($coords);
             }

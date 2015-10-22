@@ -264,6 +264,7 @@ class holeImport extends qtiImport
     {
         foreach ($mapping->getElementsByTagName("mapEntry") as $mapEntry) {
             $keyWord = new WordResponse();
+            $this->addFeedbackInLine($mapEntry,$keyWord);
             $keyWord->setResponse($mapEntry->getAttribute('mapKey'));
             $keyWord->setScore($mapEntry->getAttribute('mappedValue'));
             $keyWord->setHole($hole);
@@ -300,6 +301,7 @@ class holeImport extends qtiImport
                         if ($mapEntry->getAttribute('mapKey') == $ic->getAttribute('identifier')) {
                             $score = $mapEntry->getAttribute('mappedValue');
                             $matchScore = true;
+                            $this->addFeedbackInLine($mapEntry,$keyWord);
                         }
                         if ($mapEntry->getAttribute('caseSensitive') == true) {
                             $keyWord->setCaseSensitive(true);
@@ -322,6 +324,14 @@ class holeImport extends qtiImport
                 }
             }
         }
+    }
+    
+    protected function addFeedbackInLine($mapEntry,$keyWord){
+         $feedback = $mapEntry->getElementsByTagName("feedbackInline"); 
+                        if ($feedback->item(0)) {
+                             $keyWord->setFeedback($feedback->item(0)->nodeValue);     
+                                $mapEntry->removeChild($feedback->item(0));
+                        }
     }
 
     /**
