@@ -189,7 +189,11 @@ class InteractionGraphicController extends Controller
         $em = $this->getDoctrine()->getManager();
         $interactionGraphic = $em->getRepository('UJMExoBundle:InteractionGraphic')->find($id);
         $coords = $em->getRepository('UJMExoBundle:Coords')->findBy(array('interactionGraphic' => $id));
-
+       //If the question is shared, deleting of relations
+        $sharesQuestion = $em->getRepository('UJMExoBundle:Share')->findBy(array('question' => $interactionGraphic->getInteraction()->getQuestion()->getId()));       
+        foreach ($sharesQuestion as $share){
+            $em->remove($share);
+        }
         if (!$interactionGraphic) {
             throw $this->createNotFoundException('Unable to find InteractionGraphic entity.');
         }

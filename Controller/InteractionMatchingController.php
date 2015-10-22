@@ -180,7 +180,11 @@ class InteractionMatchingController extends Controller
     {
         $em = $this->getDoctrine()->getManager();
         $entity = $em->getRepository('UJMExoBundle:InteractionMatching')->find($id);
-
+        //If the question is shared, deleting of relations
+        $sharesQuestion = $em->getRepository('UJMExoBundle:Share')->findBy(array('question' => $entity->getInteraction()->getQuestion()->getId()));       
+        foreach ($sharesQuestion as $share){
+            $em->remove($share);
+        }
         if ( !$entity ) {
             throw $this->createNotFoundException('Enable to find InteractionMatching entity.');
         }

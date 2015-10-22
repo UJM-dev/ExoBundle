@@ -182,7 +182,11 @@ class InteractionQCMController extends Controller
 
         $em = $this->getDoctrine()->getManager();
         $entity = $em->getRepository('UJMExoBundle:InteractionQCM')->find($id);
-
+        //If the question is shared, deleting of the relations
+        $sharesQuestion = $em->getRepository('UJMExoBundle:Share')->findBy(array('question' => $entity->getInteraction()->getQuestion()->getId()));       
+        foreach ($sharesQuestion as $share){
+            $em->remove($share);
+        }
         if (!$entity) {
             throw $this->createNotFoundException('Unable to find InteractionQCM entity.');
         }
