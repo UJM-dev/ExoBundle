@@ -150,14 +150,19 @@ class qcmExport extends qtiExport
      */
     protected function promptTag()
     {
-        $prompt = $this->document->CreateElement('prompt');
+        $prompt = $this->document->CreateElement('prompt');       
+        $invite =$this->interactionqcm->getInteraction()->getInvite();
+         //Check if there are image
+        if(strpos($invite,'<img') !== false){
+           $invite=$this->qtiImage($invite);
+           $inviteNew = $this->document->importNode($invite, true);
+           $prompt->appendChild($inviteNew);
+        }
+        else{
+           $prompttxt = $this->document->CreateTextNode($invite);       
+           $prompt->appendChild($prompttxt);
+        }
         $this->choiceInteraction->appendChild($prompt);
-
-        $prompttxt =  $this->document
-                ->CreateTextNode(
-                        $this->interactionqcm->getInteraction()->getInvite()
-                        );
-        $prompt->appendChild($prompttxt);
         $this->qtiChoicesQCM($this->correctResponse);
     }
 

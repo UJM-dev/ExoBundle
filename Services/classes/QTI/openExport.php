@@ -52,10 +52,18 @@ class openExport extends qtiExport
     {
         $arg_list = func_get_args();
         $node = $arg_list[0];
-
+        $invite =$this->interactionopen->getInteraction()->getInvite();
         $prompt = $this->document->CreateElement('prompt');
-        $prompttxt = $this->document->CreateTextNode($this->interactionopen->getInteraction()->getInvite());
-        $prompt->appendChild($prompttxt);
+        //Check if there are image
+        if(strpos($invite,'<img') !== false){
+           $invite=$this->qtiImage($invite);
+           $inviteNew = $this->document->importNode($invite, true);
+           $prompt->appendChild($inviteNew);
+        }
+        else{
+           $prompttxt = $this->document->CreateTextNode($invite);       
+           $prompt->appendChild($prompttxt);
+        }
         $node->appendChild($prompt);
     }
 

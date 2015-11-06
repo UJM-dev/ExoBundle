@@ -144,7 +144,7 @@ class graphicExport extends qtiExport
         $this->selectPointInteraction = $this->document->createElement("selectPointInteraction");
         $this->selectPointInteraction->setAttribute("responseIdentifier", "RESPONSE");
         $this->selectPointInteraction->setAttribute("maxChoices",
-                count($this->interactiongraph->getCoords()));
+                count($this->interactiongraph->getCoords()));       
 
         $object = $this->document->CreateElement('object');
         $mimetype = $this->interactiongraph->getDocument()->getType();
@@ -172,9 +172,18 @@ class graphicExport extends qtiExport
      */
     protected function promptTag()
     {
+        $invite =$this->interactiongraph->getInteraction()->getInvite();
         $prompt = $this->document->CreateElement('prompt');
-        $prompttxt = $this->document->CreateTextNode($this->interactiongraph->getInteraction()->getInvite());
-        $prompt->appendChild($prompttxt);
+         //Check if there are image
+        if(strpos($invite,'<img') !== false){
+           $invite=$this->qtiImage($invite);
+           $inviteNew = $this->document->importNode($invite, true);
+           $prompt->appendChild($inviteNew);
+        }
+        else{
+           $prompttxt = $this->document->CreateTextNode($invite);       
+           $prompt->appendChild($prompttxt);
+        }
         $this->selectPointInteraction->appendChild($prompt);
     }
 

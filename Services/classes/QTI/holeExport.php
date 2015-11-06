@@ -136,9 +136,18 @@ class holeExport extends qtiExport
      */
     protected function promptTag()
     {
-        $prompt = $this->document->CreateElement('prompt');
-        $prompttxt = $this->document->CreateTextNode($this->interactionhole->getInteraction()->getInvite());
-        $prompt->appendChild($prompttxt);
+        $invite =$this->interactionhole->getInteraction()->getInvite();
+        $prompt = $this->document->CreateElement('prompt');       
+        //Check if there are image
+        if(strpos($invite,'<img') !== false){
+           $invite=$this->qtiImage($invite);
+           $inviteNew = $this->document->importNode($invite, true);
+           $prompt->appendChild($inviteNew);
+        }
+        else{
+           $prompttxt = $this->document->CreateTextNode($invite);       
+           $prompt->appendChild($prompttxt);
+        }
         $this->itemBody->appendChild($prompt);
     }
 

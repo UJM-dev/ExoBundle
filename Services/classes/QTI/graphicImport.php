@@ -77,30 +77,30 @@ class graphicImport extends qtiImport {
     protected function createCoords() {
         $am = $this->assessmentItem->getElementsByTagName("areaMapping")->item(0);
 
-            foreach ($am->getElementsByTagName("areaMapEntry") as $areaMapEntry) {
-                $tabCoords = explode(',', $areaMapEntry->getAttribute('coords'));
-                $coords = new Coords();
-                $feedback = $areaMapEntry->getElementsByTagName("feedbackInline");
-                if ($feedback->item(0)) {
-                    $coords->setFeedback($feedback->item(0)->nodeValue);
-                    $areaMapEntry->removeChild($feedback->item(0));
-                }
-                $x = $tabCoords[0] - $tabCoords[2];
-                $y = $tabCoords[1] - $tabCoords[2];
-                $coords->setValue($x.','.$y);
-                $coords->setSize($tabCoords[2] * 2);
-                $coords->setShape($areaMapEntry->getAttribute('shape'));
-                $coords->setScoreCoords($areaMapEntry->getAttribute('mappedValue'));
-                            $color = $areaMapEntry->getAttribute('color');
-                if ($color === '') {
-                    $coords->setColor('black');
-                } else {
-                    $coords->setColor($color);
-                }
-                $coords->setInteractionGraphic($this->interactionGraph);
-                $this->om->persist($coords);
+        foreach ($am->getElementsByTagName("areaMapEntry") as $areaMapEntry) {
+            $tabCoords = explode(',', $areaMapEntry->getAttribute('coords'));
+            $coords = new Coords();
+            $feedback = $areaMapEntry->getElementsByTagName("feedbackInline");
+            if ($feedback->item(0)) {
+                $coords->setFeedback($feedback->item(0)->nodeValue);
+                $areaMapEntry->removeChild($feedback->item(0));
             }
-            $this->om->flush();
+            $x = $tabCoords[0] - $tabCoords[2];
+            $y = $tabCoords[1] - $tabCoords[2];
+            $coords->setValue($x . ',' . $y);
+            $coords->setSize($tabCoords[2] * 2);
+            $coords->setShape($areaMapEntry->getAttribute('shape'));
+            $coords->setScoreCoords($areaMapEntry->getAttribute('mappedValue'));
+            $color = $areaMapEntry->getAttribute('color');
+            if ($color === '') {
+                $coords->setColor('black');
+            } else {
+                $coords->setColor($color);
+            }
+            $coords->setInteractionGraphic($this->interactionGraph);
+            $this->om->persist($coords);
+        }
+        $this->om->flush();
     }
 
     /**
@@ -111,14 +111,14 @@ class graphicImport extends qtiImport {
      *
      */
     protected function createPicture($objectTag) {
-        $user    = $this->container->get('security.token_storage')->getToken()->getUser();
-        $userDir = $this->container->getParameter('claroline.param.uploads_directory') . '/ujmexo/users_documents/'.$user->getUsername();
+        $user = $this->container->get('security.token_storage')->getToken()->getUser();
+        $userDir = $this->container->getParameter('claroline.param.uploads_directory') . '/ujmexo/users_documents/' . $user->getUsername();
         $picName = $this->cpPicture($objectTag->getAttribute('data'), $userDir);
 
         $document = new Document();
         $document->setLabel($objectTag->nodeValue);
         $document->setType($objectTag->getAttribute('type'));
-        $document->setUrl('./uploads/ujmexo/users_documents/'.$user->getUsername().'/images/'.$picName);
+        $document->setUrl('./uploads/ujmexo/users_documents/' . $user->getUsername() . '/images/' . $picName);
         $document->setUser($user);
 
         $this->om->persist($document);
@@ -127,7 +127,6 @@ class graphicImport extends qtiImport {
         $this->interactionGraph->setDocument($document);
         $this->om->persist($this->interactionGraph);
         $this->om->flush();
-
     }
 
     /**
@@ -139,7 +138,7 @@ class graphicImport extends qtiImport {
      *
      */
     protected function cpPicture($picture, $userDir) {
-        $src = $this->qtiRepos->getUserDir().'/'.$picture;
+        $src = $this->qtiRepos->getUserDir() . '/' . $picture;
         $uploadDirectory = $this->container->getParameter('claroline.param.uploads_directory');
 
         if (!is_dir($uploadDirectory . '/ujmexo/')) {
@@ -148,22 +147,21 @@ class graphicImport extends qtiImport {
         if (!is_dir($uploadDirectory . '/ujmexo/users_documents/')) {
             mkdir($uploadDirectory . '/ujmexo/users_documents/');
         }
-
         if (!is_dir($userDir)) {
-            $dirs = array('audio','images','media','video');
+            $dirs = array('audio', 'images', 'media', 'video');
             mkdir($userDir);
 
             foreach ($dirs as $dir) {
-                mkdir($userDir.'/'.$dir);
+                mkdir($userDir . '/' . $dir);
             }
         }
 
         $picName = $this->getPictureName($picture);
-        $dest = $userDir.'/images/'.$picName;
+        $dest = $userDir . '/images/' . $picName;
         $i = 1;
         while (file_exists($dest)) {
-            $picName = $i.'_'.$this->getPictureName($picture);
-            $dest = $userDir.'/images/'.$picName;
+            $picName = $i . '_' . $this->getPictureName($picture);
+            $dest = $userDir . '/images/' . $picName;
             $i++;
         }
 
@@ -180,13 +178,11 @@ class graphicImport extends qtiImport {
      *
      * @return String
      */
-    private function getPictureName($picture)
-    {
+    private function getPictureName($picture) {
         $dirs = explode('/', $picture);
 
         return $dirs[count($dirs) - 1];
     }
-
 
     /**
      * Implements the abstract method
@@ -194,8 +190,7 @@ class graphicImport extends qtiImport {
      * @access protected
      *
      */
-    protected function getPrompt()
-    {
+    protected function getPrompt() {
         $text = '';
         $ib = $this->assessmentItem->getElementsByTagName("itemBody")->item(0);
         if ($ib->getElementsByTagName("prompt")->item(0)) {
@@ -216,8 +211,7 @@ class graphicImport extends qtiImport {
      *
      * @return boolean
      */
-    protected function qtiIsValid()
-    {
+    protected function qtiIsValid() {
         $qtiIsValid = true;
 
         $am = $this->assessmentItem->getElementsByTagName("areaMapping")->item(0);
@@ -225,9 +219,9 @@ class graphicImport extends qtiImport {
             $qtiIsValid = false;
         } else {
             foreach ($am->getElementsByTagName("areaMapEntry") as $areaMapEntry) {
-                    if ($areaMapEntry->getAttribute('coords') == '') {
-                        $qtiIsValid = false;
-                    }
+                if ($areaMapEntry->getAttribute('coords') == '') {
+                    $qtiIsValid = false;
+                }
             }
         }
 

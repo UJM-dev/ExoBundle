@@ -100,7 +100,7 @@ abstract class qtiImport
      *
      */
     protected function createInteraction()
-    {
+    {       
         $feedback = $this->getFeedback();
         $this->interaction = new Interaction;
         $this->interaction->setInvite($this->getPrompt());
@@ -191,7 +191,7 @@ abstract class qtiImport
         $md = $this->assessmentItem->getElementsByTagName("modalFeedback")->item(0);
         if (isset($md)) {
            $feedback = $md->nodeValue;
-        }
+    }
 
         return $feedback;
     }
@@ -206,15 +206,15 @@ abstract class qtiImport
     {
         $ib = $this->assessmentItem->getElementsByTagName("itemBody")->item(0);
         $desc = '';
-        foreach($ib->childNodes as $child) {
+        foreach($ib->childNodes as $child) {            
             if ($child->nodeType === XML_CDATA_SECTION_NODE || $child->nodeType === XML_TEXT_NODE) {
                 $desc .= $child->textContent;
             } else if ($child->nodeName == 'a' || $child->nodeName == 'img') {
                 $desc .= $this->domElementToString($child);
                 $ib->removeChild($child);
             }
-        }
-        foreach ($ib->getElementsByTagName("img") as $img) {
+        }   
+        foreach ($ib->getElementsByTagName("img") as $img) {   
             $node = $img->parentNode;
             $i = 0;
             while ($i == 0) {
@@ -228,7 +228,7 @@ abstract class qtiImport
                 $desc .= $this->domElementToString($img);
             }
         }
-        $this->question->setDescription($desc);
+            $this->question->setDescription($desc);
     }
 
     /**
@@ -238,7 +238,7 @@ abstract class qtiImport
      *
      */
     private function objectToResource()
-    {
+    {      
         $elements = array();
         $objects = $this->assessmentItem->getElementsByTagName('object');
         $ws      = $this->user->getPersonalWorkspace();
@@ -321,9 +321,9 @@ abstract class qtiImport
      *
      */
     private function replaceNode($ob, $resourceNode)
-    {
+    {       
         $mimeType = $ob->getAttribute('type');
-        if (strpos($mimeType, 'image/') !== false) {
+        if (strpos($mimeType, 'image/') !== false) {          
             $url = $this->container->get('router')
                         ->generate('claro_file_get_media',
                                 array('node' => $resourceNode->getId())
