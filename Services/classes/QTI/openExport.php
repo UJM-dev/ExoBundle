@@ -54,15 +54,11 @@ class openExport extends qtiExport
         $node = $arg_list[0];
         $invite =$this->interactionopen->getInteraction()->getInvite();
         $prompt = $this->document->CreateElement('prompt');
-        //Check if there are image
-        if(strpos($invite,'<img') !== false){
-           $invite=$this->qtiImage($invite);
-           $inviteNew = $this->document->importNode($invite, true);
-           $prompt->appendChild($inviteNew);
-        }
-        else{
-           $prompttxt = $this->document->CreateTextNode($invite);       
-           $prompt->appendChild($prompttxt);
+        //Managing the resource export
+        $body=$this->qtiExportObject($invite);
+        foreach ($body->childNodes as $child) {
+            $inviteNew = $this->document->importNode($child, true);
+            $prompt->appendChild($inviteNew);
         }
         $node->appendChild($prompt);
     }

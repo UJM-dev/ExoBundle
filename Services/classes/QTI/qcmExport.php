@@ -148,21 +148,14 @@ class qcmExport extends qtiExport
      * @access protected
      *
      */
-    protected function promptTag()
-    {
+    protected function promptTag(){
         $prompt = $this->document->CreateElement('prompt');
-        $invite =$this->interactionqcm->getInteraction()->getInvite();
-         //Check if there are image
-        if(strpos($invite,'<img') !== false){
-           $body = $this->qtiImage($invite);
-           foreach ($body->childNodes as $child) {
-                $inviteNew = $this->document->importNode($child, true);
-                $prompt->appendChild($inviteNew);
-           }
-        }
-        else{
-           $prompttxt = $this->document->CreateTextNode($invite);
-           $prompt->appendChild($prompttxt);
+        $invite = $this->interactionqcm->getInteraction()->getInvite();
+       //Managing the resource export
+        $body = $this->qtiExportObject($invite);
+        foreach ($body->childNodes as $child) {
+            $inviteNew = $this->document->importNode($child, true);
+            $prompt->appendChild($inviteNew);
         }
         $this->choiceInteraction->appendChild($prompt);
         $this->qtiChoicesQCM($this->correctResponse);

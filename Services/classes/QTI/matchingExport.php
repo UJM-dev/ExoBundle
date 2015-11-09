@@ -100,16 +100,12 @@ class matchingExport extends qtiExport
     protected function promptTag()
     {
         $prompt = $this->document->CreateElement('prompt');       
-        $invite =$this->interactionmatching->getInteraction()->getInvite();
-         //Check if there are image
-        if(strpos($invite,'<img') !== false){
-           $invite=$this->qtiImage($invite);
-           $inviteNew = $this->document->importNode($invite, true);
-           $prompt->appendChild($inviteNew);
-        }
-        else{
-           $prompttxt = $this->document->CreateTextNode($invite);       
-           $prompt->appendChild($prompttxt);
+        $invite =$this->interactionmatching->getInteraction()->getInvite(); 
+        //Managing the resource export
+        $body=$this->qtiExportObject($invite);
+        foreach ($body->childNodes as $child) {
+            $inviteNew = $this->document->importNode($child, true);
+            $prompt->appendChild($inviteNew);
         }
         $this->matchInteraction->appendChild($prompt);
         $this->qtiProposal();

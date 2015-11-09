@@ -179,44 +179,44 @@ abstract class qtiExport
     }
 
     /**
-     * Gestion de l'export d'images au format QTI
-     * @param String $txt
+     * Managing the resource export, format QTI
+     * @param String $str 
      * @return DOMElement
      */
-    protected function qtiImage($txt){
+    protected function qtiExportObject($str) {
         $DOMdoc = new \DOMDocument();
-        $DOMdoc->loadHTML($txt);
-        $searchImg= $DOMdoc->getElementsByTagName('img');
+        $DOMdoc->loadHTML($str);
+        $tagsImg = $DOMdoc->getElementsByTagName('img');
 
-        foreach($searchImg as $img){
+        foreach ($tagsImg as $img) {
             $object = $DOMdoc->CreateElement('object');
-            //Recupere les infos de l'image
-            $alt=$img->getAttribute('alt');
+            //Collect information on the image
+            $alt = $img->getAttribute('alt');
             $object->setAttribute("data", $alt);
             $objecttxt = $DOMdoc->CreateTextNode($alt);
             $object->appendChild($objecttxt);
 
-            $type=explode('.', $alt);
-            $mimetype=end($type);
-            $mimetype = "image/". $mimetype;
+            $type = explode('.', $alt);
+            $mimetype = end($type);
+            $mimetype = "image/" . $mimetype;
             $object->setAttribute("type", $mimetype);
 
-            //Copie l'image dans l'archive
-            $src=$img->getAttribute('src');
-            $this->getPictureInTxt($alt,$src);
-            //Cretion d'un tableau pour remplacer les balises
-            $elements[]=array($object,$img);
+            //Copy the image in the archive
+            $src = $img->getAttribute('src');
+            $this->getPictureInTxt($alt, $src);
+            //Creating one table to replace the tags 
+            $elements[] = array($object, $img);
         }
-        //Remplace les balise image par les balise object
-        foreach ($elements as $el){
-          //el[0] = node object et el[1] = node image
-          $el[1]->parentNode->replaceChild($el[0], $el[1]);
+        //Replaces image tag by the object tag
+        if (!empty($elements)) {
+            foreach ($elements as $el) {
+                //el[0] = node object et el[1] = node image
+                $el[1]->parentNode->replaceChild($el[0], $el[1]);
+            }
         }
-        //On recupere la balise p
         $body = $DOMdoc->getElementsByTagName('body')->item(0);
 
         return $body;
-
     }
 
     private function getPictureInTxt($pictureName,$url){
