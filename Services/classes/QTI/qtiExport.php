@@ -162,11 +162,11 @@ abstract class qtiExport
      *
      */
     protected function qtiDescription(){
-        $describe = $this->question->getDescription();     
-        //Check if there are image        
-        if ($describe != NULL && $describe != '') {       
+        $describe = $this->question->getDescription();
+        //Check if there are image
+        if ($describe != NULL && $describe != '') {
             if (strpos($describe, '<img') !== false) {
-                $describe = $this->qtiImage($describe);               
+                $describe = $this->qtiImage($describe);
                 $describeTagNew = $this->document->importNode($describe, true);
                 $describeTag= $this->document->appendChild($describeTagNew);
             }
@@ -180,10 +180,10 @@ abstract class qtiExport
 
     /**
      * Gestion de l'export d'images au format QTI
-     * @param String $txt 
-     * @return DOMElement 
+     * @param String $txt
+     * @return DOMElement
      */
-    protected function qtiImage($txt){       
+    protected function qtiImage($txt){
         $DOMdoc = new \DOMDocument();
         $DOMdoc->loadHTML($txt);
         $searchImg= $DOMdoc->getElementsByTagName('img');
@@ -195,31 +195,32 @@ abstract class qtiExport
             $object->setAttribute("data", $alt);
             $objecttxt = $DOMdoc->CreateTextNode($alt);
             $object->appendChild($objecttxt);
-            
+
             $type=explode('.', $alt);
             $mimetype=end($type);
             $mimetype = "image/". $mimetype;
             $object->setAttribute("type", $mimetype);
-            
+
             //Copie l'image dans l'archive
             $src=$img->getAttribute('src');
-            $this->getPictureInTxt($alt,$src);       
+            $this->getPictureInTxt($alt,$src);
             //Cretion d'un tableau pour remplacer les balises
             $elements[]=array($object,$img);
         }
         //Remplace les balise image par les balise object
         foreach ($elements as $el){
-          //el[0] = node object et el[1] = node image 
+          //el[0] = node object et el[1] = node image
           $el[1]->parentNode->replaceChild($el[0], $el[1]);
-        }       
+        }
         //On recupere la balise p
-        $p = $DOMdoc->getElementsByTagName('p')->item(0);      
-        return $p;
-        
-    }  
-    
+        $body = $DOMdoc->getElementsByTagName('body')->item(0);
+
+        return $body;
+
+    }
+
     private function getPictureInTxt($pictureName,$url){
-        $dest = $this->qtiRepos->getUserDir().$pictureName;      
+        $dest = $this->qtiRepos->getUserDir().$pictureName;
         $urlExplode=explode('/', $url);
         $idNode=end($urlExplode);
         $objSrc=  $this->doctrine->getManager()->getRepository('ClarolineCoreBundle:Resource\File')->findOneBy(array('resourceNode' => $idNode));
@@ -264,7 +265,7 @@ abstract class qtiExport
 
         $zip->close();
 
-        $qtiServ = $this->container->get('ujm.qti_services');      
+        $qtiServ = $this->container->get('ujm.qti_services');
         $response = $qtiServ->createZip($tmpFileName, $this->question->getId());
 
         return $response;
