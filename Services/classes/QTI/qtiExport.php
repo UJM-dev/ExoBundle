@@ -180,54 +180,43 @@ abstract class qtiExport
 
     /**
      * Managing the resource export, format QTI
-     * @param String $str 
+     * @param String $str
      * @return DOMElement
      */
     protected function qtiExportObject($str) {
         $DOMdoc = new \DOMDocument();
         $DOMdoc->loadHTML($str);
-        $tagsImg = $DOMdoc->getElementsByTagName('img');
 
-        foreach ($tagsImg as $img) {
-            $object = $DOMdoc->CreateElement('object');
-            //Collect information on the image
-            $alt = $img->getAttribute('alt');
-            $object->setAttribute("data", $alt);
-            $objecttxt = $DOMdoc->CreateTextNode($alt);
-            $object->appendChild($objecttxt);
-
-            $type = explode('.', $alt);
-            $mimetype = end($type);
-            $mimetype = "image/" . $mimetype;
-            $object->setAttribute("type", $mimetype);
-
-            //Copy the image in the archive
-            $src = $img->getAttribute('src');
-            $this->getPictureInTxt($alt, $src);
-            //Creating one table to replace the tags 
-            $elements[] = array($object, $img);
-        }
-        //Replaces image tag by the object tag
-        if (!empty($elements)) {
-            foreach ($elements as $el) {
-                //el[0] = node object et el[1] = node image
-                $el[1]->parentNode->replaceChild($el[0], $el[1]);
-            }
-        }
+        $this->imgToObject($DOMdoc);
+        $this->aToObject($DOMdoc);
         $body = $DOMdoc->getElementsByTagName('body')->item(0);
 
         return $body;
     }
 
-    private function getPictureInTxt($pictureName,$url){
-        $dest = $this->qtiRepos->getUserDir().$pictureName;
-        $urlExplode=explode('/', $url);
-        $idNode=end($urlExplode);
-        $objSrc=  $this->doctrine->getManager()->getRepository('ClarolineCoreBundle:Resource\File')->findOneBy(array('resourceNode' => $idNode));
-        $src=$this->container->getParameter('claroline.param.files_directory').'/'.$objSrc->getHashName();
+    /**
+     * Export atached file
+     * @access private
+     *
+     * @param String $path path of file to export
+     *
+     * @return String[] $fileInfo return the name and the mime type of the exported file
+     */
+    private function getFile($path) {
+        $fileInfo = array();
+        $urlExplode = explode('/', $path);
+        $idNode = end($urlExplode);
+        $objSrc =  $this->doctrine->getManager()->getRepository('ClarolineCoreBundle:Resource\File')->findOneBy(array('resourceNode' => $idNode));
+        $src = $this->container->getParameter('claroline.param.files_directory').'/'.$objSrc->getHashName();
+        $name = $objSrc->getResourceNode()->getName();
+        $dest = $this->qtiRepos->getUserDir().$name;
         copy($src, $dest);
-        $ressource = array ('name' => $pictureName, 'url' => $src);
+        $ressource = array ('name' => $name, 'url' => $src);
         $this->resourcesLinked[] = $ressource;
+        $fileInfo['name'] = $name;
+        $fileInfo['mimeType'] = $objSrc->getResourceNode()->getMimeType();
+
+        return $fileInfo;
     }
 
     /**
@@ -269,6 +258,68 @@ abstract class qtiExport
         $response = $qtiServ->createZip($tmpFileName, $this->question->getId());
 
         return $response;
+    }
+
+    /**
+     * Convert img tag to object tag
+     * @access private
+     *
+     * @param \DOMDocument $DOMdoc
+     *
+     */
+    private function imgToObject($DOMdoc)
+    {
+        $tagsImg = $DOMdoc->getElementsByTagName('img');
+        foreach ($tagsImg as $img) {
+            $object = $DOMdoc->CreateElement('object');
+
+            //Copy the image in the archive
+            $src = $img->getAttribute('src');
+            $fileInfos = $this->getFile($src);
+            $object->setAttribute("data", $fileInfos['name']);
+            $objecttxt = $DOMdoc->CreateTextNode($fileInfos['name']);
+            $object->appendChild($objecttxt);
+            $object->setAttribute("type", $fileInfos['mimeType']);
+            //Creating one table to replace the tags
+            $elements[] = array($object, $img);
+        }
+        //Replaces image tag by the object tag
+        if (!empty($elements)) {
+            foreach ($elements as $el) {
+                $el[1]->parentNode->replaceChild($el[0], $el[1]);
+            }
+        }
+    }
+
+    /**
+     * Convert a tag to object tag
+     * @access private
+     *
+     * @param \DOMDocument $DOMdoc
+     *
+     */
+    private function aToObject($DOMdoc)
+    {
+        $aTags = $DOMdoc->getElementsByTagName('a');
+        foreach ($aTags as $aTag) {
+            $object = $DOMdoc->CreateElement('object');
+
+            //Copy the file in the archive
+            $path = $aTag->getAttribute('href');
+            $fileInfos = $this->getFile($path);
+
+            $object->setAttribute("data", $fileInfos['name']);
+            $object->setAttribute("type", $fileInfos['mimeType']);
+
+            //Creating one table to replace the tags
+            $elements[] = array($object, $aTag);
+        }
+        //Replaces image tag by the object tag
+        if (!empty($elements)) {
+            foreach ($elements as $el) {
+                $el[1]->parentNode->replaceChild($el[0], $el[1]);
+            }
+        }
     }
 
     /**
