@@ -175,14 +175,13 @@ class qcmExport extends qtiExport
         $simpleChoice = $this->document->CreateElement('simpleChoice');
         $simpleChoice->setAttribute("identifier", "Choice".$choiceNumber);
         $this->choiceInteraction->appendChild($simpleChoice);
-        $simpleChoicetxt =  $this->document->CreateTextNode($choice->getLabel());
          if ($choice->getPositionForce() == 1) {
             $positionForced = 'true';
         } else {
             $positionForced = 'false';
         }
         $simpleChoice->setAttribute("fixed", $positionForced);
-        $simpleChoice->appendChild($simpleChoicetxt);
+        $this->getDomEl($simpleChoice, $choice->getLabel());
 
         //comment per line for each choice
         if(($choice->getFeedback()!=Null) && ($choice->getFeedback()!="")){
@@ -190,8 +189,7 @@ class qcmExport extends qtiExport
             $feedbackInline->setAttribute("outcomeIdentifier", "FEEDBACK");
             $feedbackInline->setAttribute("identifier","Choice".$choiceNumber);
             $feedbackInline->setAttribute("showHide","show");
-            $feedbackInlinetxt = $this->document->CreateTextNode($choice->getFeedback());
-            $feedbackInline->appendChild($feedbackInlinetxt);
+            $this->getDomEl($feedbackInline, $choice->getFeedback());
             $simpleChoice->appendChild($feedbackInline);
         }
     }

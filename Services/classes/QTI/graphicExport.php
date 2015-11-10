@@ -124,8 +124,7 @@ class graphicExport extends qtiExport
                 $feedbackInline->setAttribute("outcomeIdentifier", "FEEDBACK");
                 $feedbackInline->setAttribute("identifier", "Choice" . $c->getId());
                 $feedbackInline->setAttribute("showHide", "show");
-                $feedbackInlinetxt = $this->document->CreateTextNode($c->getFeedback());
-                $feedbackInline->appendChild($feedbackInlinetxt);
+                $this->getDomEl($feedbackInline, $c->getFeedback());
                 $areaMapEntry->appendChild($feedbackInline);
             }
         }
@@ -144,7 +143,7 @@ class graphicExport extends qtiExport
         $this->selectPointInteraction = $this->document->createElement("selectPointInteraction");
         $this->selectPointInteraction->setAttribute("responseIdentifier", "RESPONSE");
         $this->selectPointInteraction->setAttribute("maxChoices",
-                count($this->interactiongraph->getCoords()));       
+                count($this->interactiongraph->getCoords()));
 
         $object = $this->document->CreateElement('object');
         $mimetype = $this->interactiongraph->getDocument()->getType();

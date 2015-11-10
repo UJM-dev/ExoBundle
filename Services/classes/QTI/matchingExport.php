@@ -99,8 +99,8 @@ class matchingExport extends qtiExport
      */
     protected function promptTag()
     {
-        $prompt = $this->document->CreateElement('prompt');       
-        $invite =$this->interactionmatching->getInteraction()->getInvite(); 
+        $prompt = $this->document->CreateElement('prompt');
+        $invite =$this->interactionmatching->getInteraction()->getInvite();
         //Managing the resource export
         $body=$this->qtiExportObject($invite);
         foreach ($body->childNodes as $child) {
@@ -165,9 +165,7 @@ class matchingExport extends qtiExport
         $simpleProposal->setAttribute("matchMax", $maxAssociation);
 
         $this->matchInteraction->appendChild($simpleProposal);
-        $simpleProposaltxt =  $this->document->CreateTextNode($proposal->getValue());
-
-        $simpleProposal->appendChild($simpleProposaltxt);
+        $this->getDomEl($simpleProposal, $proposal->getValue());
         $elementProposal->appendChild($simpleProposal);
     }
 
@@ -207,7 +205,7 @@ class matchingExport extends qtiExport
         } else {
             $maxAssociation = 1;
         }
-        
+
         if ($label->getPositionForce() == 1) {
             $positionForced = 'true';
         } else {
@@ -221,22 +219,19 @@ class matchingExport extends qtiExport
         $simpleLabel->setAttribute("matchMax", $maxAssociation);
 
         $this->matchInteraction->appendChild($simpleLabel);
-        $simpleLabeltxt =  $this->document->CreateTextNode($label->getValue());
-
-        $simpleLabel->appendChild($simpleLabeltxt);
+        $this->getDomEl($simpleLabel, $label->getValue());
         $elementLabel->appendChild($simpleLabel);
-        
+
         if(($label->getFeedback()!=Null) && ($label->getFeedback()!="")){
             $feedbackInline = $this->document->CreateElement('feedbackInline');
             $feedbackInline->setAttribute("outcomeIdentifier", "FEEDBACK");
             $feedbackInline->setAttribute("identifier","Choice".$numberLabel);
             $feedbackInline->setAttribute("showHide","show");
-            $feedbackInlinetxt = $this->document->CreateTextNode($label->getFeedback());
-            $feedbackInline->appendChild($feedbackInlinetxt);
+            $this->getDomEl($feedbackInline, $label->getFeedback());
             $simpleLabel->appendChild($feedbackInline);
         }
     }
-       
+
     /**
      * Implements the abstract method
      * add the tag correctResponse in responseDeclaration

@@ -111,7 +111,9 @@ class matchingImport extends qtiImport {
             $label = new Label();
             $feedback = $simpleLabel->getElementsByTagName("feedbackInline");
             if ($feedback->item(0)) {
-                $label->setFeedback($feedback->item(0)->nodeValue);
+                $feedbackVal = $this->domElementToString($feedback->item(0));
+                $feedbackVal = html_entity_decode($feedbackVal);
+                $label->setFeedback($feedbackVal);
                 $simpleLabel->removeChild($feedback->item(0));
             }
             $label->setValue($this->value($simpleLabel));

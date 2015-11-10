@@ -82,7 +82,9 @@ class graphicImport extends qtiImport {
             $coords = new Coords();
             $feedback = $areaMapEntry->getElementsByTagName("feedbackInline");
             if ($feedback->item(0)) {
-                $coords->setFeedback($feedback->item(0)->nodeValue);
+                $feedbackVal = $this->domElementToString($feedback->item(0));
+                $feedbackVal = html_entity_decode($feedbackVal);
+                $coords->setFeedback($feedbackVal);
                 $areaMapEntry->removeChild($feedback->item(0));
             }
             $x = $tabCoords[0] - $tabCoords[2];

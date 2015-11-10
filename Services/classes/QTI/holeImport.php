@@ -325,13 +325,15 @@ class holeImport extends qtiImport
             }
         }
     }
-    
+
     protected function addFeedbackInLine($mapEntry,$keyWord){
-         $feedback = $mapEntry->getElementsByTagName("feedbackInline"); 
-                        if ($feedback->item(0)) {
-                             $keyWord->setFeedback($feedback->item(0)->nodeValue);     
-                                $mapEntry->removeChild($feedback->item(0));
-                        }
+        $feedback = $mapEntry->getElementsByTagName("feedbackInline");
+        if ($feedback->item(0)) {
+            $feedbackVal = $this->domElementToString($feedback->item(0));
+            $feedbackVal = html_entity_decode($feedbackVal);
+            $keyWord->setFeedback($feedbackVal);
+            $mapEntry->removeChild($feedback->item(0));
+        }
     }
 
     /**

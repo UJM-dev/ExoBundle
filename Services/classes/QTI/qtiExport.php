@@ -143,15 +143,13 @@ abstract class qtiExport
         $this->modalFeedback->setAttribute("outcomeIdentifier","FEEDBACK");
         $this->modalFeedback->setAttribute("identifier","COMMENT");
         $this->modalFeedback->setAttribute("showHide","show");
-        if(strpos($feedBack,'<img') !== false){
-           $feedBack=$this->qtiImage($feedBack);
-           $feedBackNew = $this->document->importNode($feedBack, true);
-           $this->modalFeedback->appendChild($feedBackNew);
+
+        $body = $this->qtiExportObject($feedBack);
+        foreach ($body->childNodes as $child) {
+            $feedBackNew = $this->document->importNode($child, true);
+            $this->modalFeedback->appendChild($feedBackNew);
         }
-        else{
-            $modalFeedbacktxt = $this->document->CreateTextNode($feedBack);
-            $this->modalFeedback->appendChild($modalFeedbacktxt);
-        }
+
         $this->node->appendChild($this->modalFeedback);
     }
 
@@ -254,6 +252,25 @@ abstract class qtiExport
         $response = $qtiServ->createZip($tmpFileName, $this->question->getId());
 
         return $response;
+    }
+
+    /**
+     * add the dom in a DomElement
+     *
+     * @access protected
+     *
+     * @param DOMElement $domEl
+     * @param String $label
+     *
+     */
+    protected function getDomEl($domEl, $label)
+    {
+       //Managing the resource export
+        $body = $this->qtiExportObject($label);
+        foreach ($body->childNodes as $child) {
+            $labelNew = $this->document->importNode($child, true);
+            $domEl->appendChild($labelNew);
+        }
     }
 
     /**
