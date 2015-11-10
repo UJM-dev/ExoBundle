@@ -161,21 +161,20 @@ abstract class qtiExport
      * @access protected
      *
      */
-    protected function qtiDescription(){
+    protected function qtiDescription() {
+        $dom = new \DOMDocument();
         $describe = $this->question->getDescription();
-        //Check if there are image
         if ($describe != NULL && $describe != '') {
-            if (strpos($describe, '<img') !== false) {
-                $describe = $this->qtiImage($describe);
-                $describeTagNew = $this->document->importNode($describe, true);
-                $describeTag= $this->document->appendChild($describeTagNew);
+            $body = $this->qtiExportObject($describe);
+            foreach ($body->childNodes as $child) {
+                $node = $dom->importNode($child, true);
+                $dom->appendChild($node);
             }
-            else
-            {
-                $describeTag = $this->document->createCDATASection($describe);
-            }
+            $newDesc = $dom->saveHTML();
+            $describeTag = $this->document->createCDATASection($newDesc);
             $this->itemBody->appendChild($describeTag);
         }
+
     }
 
     /**
@@ -184,12 +183,12 @@ abstract class qtiExport
      * @return DOMElement
      */
     protected function qtiExportObject($str) {
-        $DOMdoc = new \DOMDocument();
-        $DOMdoc->loadHTML($str);
+        $dom = new \DOMDocument();
+        $dom->loadHTML($str);
 
-        $this->imgToObject($DOMdoc);
-        $this->aToObject($DOMdoc);
-        $body = $DOMdoc->getElementsByTagName('body')->item(0);
+        $this->imgToObject($dom);
+        $this->aToObject($dom);
+        $body = $dom->getElementsByTagName('body')->item(0);
 
         return $body;
     }
@@ -200,10 +199,9 @@ abstract class qtiExport
      *
      * @param String $path path of file to export
      *
-     * @return String[] $fileInfo return the name and the mime type of the exported file
+     * @return \Claroline\CoreBundle\Entity\Resource\File
      */
     private function getFile($path) {
-        $fileInfo = array();
         $urlExplode = explode('/', $path);
         $idNode = end($urlExplode);
         $objSrc =  $this->doctrine->getManager()->getRepository('ClarolineCoreBundle:Resource\File')->findOneBy(array('resourceNode' => $idNode));
@@ -213,10 +211,8 @@ abstract class qtiExport
         copy($src, $dest);
         $ressource = array ('name' => $name, 'url' => $src);
         $this->resourcesLinked[] = $ressource;
-        $fileInfo['name'] = $name;
-        $fileInfo['mimeType'] = $objSrc->getResourceNode()->getMimeType();
 
-        return $fileInfo;
+        return $objSrc;
     }
 
     /**
@@ -273,13 +269,13 @@ abstract class qtiExport
         foreach ($tagsImg as $img) {
             $object = $DOMdoc->CreateElement('object');
 
-            //Copy the image in the archive
+            //Copy the image in the archiv
             $src = $img->getAttribute('src');
-            $fileInfos = $this->getFile($src);
-            $object->setAttribute("data", $fileInfos['name']);
-            $objecttxt = $DOMdoc->CreateTextNode($fileInfos['name']);
+            $file = $this->getFile($src);
+            $object->setAttribute("data", $file->getResourceNode()->getName());
+            $objecttxt = $DOMdoc->CreateTextNode($file->getResourceNode()->getName());
             $object->appendChild($objecttxt);
-            $object->setAttribute("type", $fileInfos['mimeType']);
+            $object->setAttribute("type", $file->getResourceNode()->getMimeType());
             //Creating one table to replace the tags
             $elements[] = array($object, $img);
         }
@@ -306,10 +302,10 @@ abstract class qtiExport
 
             //Copy the file in the archive
             $path = $aTag->getAttribute('href');
-            $fileInfos = $this->getFile($path);
+            $file = $this->getFile($path);
 
-            $object->setAttribute("data", $fileInfos['name']);
-            $object->setAttribute("type", $fileInfos['mimeType']);
+            $object->setAttribute("data", $file->getResourceNode()->getName());
+            $object->setAttribute("type", $file->getResourceNode()->getMimeType());
 
             //Creating one table to replace the tags
             $elements[] = array($object, $aTag);
