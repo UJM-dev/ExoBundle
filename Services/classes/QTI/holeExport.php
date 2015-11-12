@@ -206,5 +206,7 @@ class holeExport extends qtiExport
         $fragment = $this->document->createDocumentFragment();
         $fragment->appendXML($html);
         $this->itemBody->appendChild($fragment);
+        $this->imgToObject($this->document);
+        $this->aToObject($this->document);
     }
 }
