@@ -275,12 +275,12 @@ abstract class qtiExport
 
     /**
      * Convert img tag to object tag
-     * @access private
+     * @access protected
      *
      * @param \DOMDocument $DOMdoc
      *
      */
-    private function imgToObject($DOMdoc)
+    protected function imgToObject($DOMdoc)
     {
         $tagsImg = $DOMdoc->getElementsByTagName('img');
         foreach ($tagsImg as $img) {
@@ -306,12 +306,12 @@ abstract class qtiExport
 
     /**
      * Convert a tag to object tag
-     * @access private
+     * @access protected
      *
      * @param \DOMDocument $DOMdoc
      *
      */
-    private function aToObject($DOMdoc)
+    protected function aToObject($DOMdoc)
     {
         $aTags = $DOMdoc->getElementsByTagName('a');
         foreach ($aTags as $aTag) {
