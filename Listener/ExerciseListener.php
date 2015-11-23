@@ -143,6 +143,7 @@ class ExerciseListener extends ContainerAware
             $exercise->archiveExercise();
             $em->persist($exercise);
             $em->flush();
+            //Why is it here ?
             exit();
         }
 
