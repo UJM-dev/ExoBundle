@@ -97,7 +97,7 @@ class ExerciseListener extends ContainerAware
 
     public function onDelete(DeleteResourceEvent $event)
     {
-        $em = $this->container->get('doctrine.orm.entity_manager');
+        $em = $this->container->get('claroline.persistence.object_manager');
 
         $papers = $em->getRepository('UJMExoBundle:Paper')
             ->findOneBy(array(
