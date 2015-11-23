@@ -77,6 +77,7 @@ class Paper
 
     /**
      * @ORM\ManyToOne(targetEntity="UJM\ExoBundle\Entity\Exercise")
+     * @ORM\JoinColumn(onDelete="SET NULL", nullable=true)
      */
     private $exercise;
 
