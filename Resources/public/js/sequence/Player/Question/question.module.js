@@ -1,12 +1,8 @@
-/**
- * Question module
- */
-(function () {
-    'use strict';
 
-    angular.module('Question', [
-        
-    ]);
+import OpenQuestion from './Directives/OpenQuestionDirective'
+angular.module('Question', [
 
-})();
-
+  ])
+  .directive(
+    'openQuestion', () => new OpenQuestion
+  )
