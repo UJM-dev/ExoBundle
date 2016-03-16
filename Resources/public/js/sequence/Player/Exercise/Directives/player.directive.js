@@ -1,6 +1,6 @@
 
 import ExercisePlayerCtrl from '../Controllers/ExercisePlayerCtrl'
-
+// import ExerciseService from '../Services/ExerciseService'
 
 export default class ExercisePlayer {
   constructor() {
@@ -20,4 +20,6 @@ export default class ExercisePlayer {
   }
 }
 
-ExercisePlayerCtrl.$inject = ['$window', '$scope', 'PlayerDataSharing']
+ExercisePlayerCtrl.$inject = ['$window', '$scope', 'ExerciseService', 'CommonService', 'PlayerDataSharing']
+
+// ExerciseService.$inject = ['$http', '$filter', '$q', '$window'];

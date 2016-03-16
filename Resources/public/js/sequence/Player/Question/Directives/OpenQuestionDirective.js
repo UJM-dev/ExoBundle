@@ -1,5 +1,6 @@
 
 import OpenQuestionCtrl from '../Controllers/OpenQuestionCtrl'
+//import ExerciseService from '../../Exercise/Services/ExerciseService'
 export default class OpenQuestion {
   constructor() {
     this.scope = {
@@ -23,3 +24,4 @@ export default class OpenQuestion {
   }
 }
 OpenQuestionCtrl.$inject = ['$ngBootbox', '$scope', 'CommonService', 'QuestionService', 'PlayerDataSharing']
+//ExerciseService.$inject = ['$http', '$filter', '$q', '$window'];

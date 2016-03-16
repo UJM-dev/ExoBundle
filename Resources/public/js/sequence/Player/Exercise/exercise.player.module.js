@@ -2,15 +2,13 @@
  * ExercisePlayerApp
  */
 
-//import Common from '../../Common/common.module'
-//import PlayerSharedServices from '../Shared/player.shared.services.module'
-//import Question from '../Question/question.module'
 import ExercisePlayer from './Directives/player.directive'
-import PlayerDataSharing from '../Shared/Services/PlayerDataSharing'
+import OpenQuestion from '../Question/Directives/OpenQuestionDirective'
 
+import PlayerDataSharing from '../Shared/Services/PlayerDataSharing'
+import ExerciseService from './Services/ExerciseService'
 import CommonService from '../../Common/Services/CommonService'
 import QuestionService from '../Question/Services/QuestionService'
-import OpenQuestion from '../Question/Directives/OpenQuestionDirective'
 
 const dependencies = [
   'ngSanitize',
@@ -20,6 +18,8 @@ const dependencies = [
   'ui.translation',
   'ngBootbox'
 ];
+
+
 // exercise player module
 angular.module('ExercisePlayerApp', dependencies)
   .config([
@@ -32,7 +32,6 @@ angular.module('ExercisePlayerApp', dependencies)
       cfpLoadingBarProvider.spinnerTemplate = '<div class="loading">Loading&#8230;</div>';
     }
   ])
-  //.directive('clarolinesearch', () => new ClarolineSearchDirective)
   .directive(
     'exercisePlayer', () => new ExercisePlayer
   )
@@ -40,8 +39,9 @@ angular.module('ExercisePlayerApp', dependencies)
     'openQuestion', () => new OpenQuestion
   )
 	.service('PlayerDataSharing', () => new PlayerDataSharing)
-  .service('CommonService', () => new CommonService)
-  .service('QuestionService', () => new QuestionService)
+  .service('CommonService', CommonService)
+  .service('QuestionService', QuestionService)
+  .service('ExerciseService', ExerciseService)
   .filter(
     'unsafe',
     function($sce) {

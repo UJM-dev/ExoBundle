@@ -1,7 +1,6 @@
 export default class ExercisePlayerCtrl {
 
-  //constructor($window, $scope, ExerciseService, CommonService, PlayerDataSharing) {
-  constructor($window, $scope, PlayerDataSharing) {
+  constructor($window, $scope, ExerciseService, CommonService, PlayerDataSharing) {
     this.exercise = {};
     this.paper = {};
     this.user = {};
@@ -12,6 +11,8 @@ export default class ExercisePlayerCtrl {
     this.feedbackIsShown = false;
     this.currentStepIndex = 0;
     this.playerDataSharing = PlayerDataSharing;
+    this.commonService = CommonService;
+    this.exerciseService = ExerciseService;
 
     this.window = $window;
     this.scope = $scope;
@@ -84,7 +85,7 @@ export default class ExercisePlayerCtrl {
     // data set by question directive
     var studentData = this.playerDataSharing.getStudentData();
     // save the given answer (even if empty !)
-    var submitPromise = ExerciseService.submitAnswer(this.paper.id, studentData);
+    var submitPromise = this.exerciseService.submitAnswer(this.paper.id, studentData);
     submitPromise.then(function(result) {
       // then navigate to desired step / end / terminate exercise
       this.handleStepNavigation(action, studentData.paper);
@@ -119,21 +120,21 @@ export default class ExercisePlayerCtrl {
     if (action && (action === 'forward' || action === 'backward' || action === 'goto')) {
       this.setCurrentStep(this.currentStepIndex);
     } else if (action && action === 'end') {
-      var endPromise = ExerciseService.endSequence(paper);
+      var endPromise = this.exerciseService.endSequence(paper);
       endPromise.then(function(result) {
         if (this.checkCorrectionAvailability()) {
           // go to paper correction view
-          var url = CommonService.generateUrl('paper-list', this.exercise.id) + '#/' + this.exercise.id + '/' + paper.id;
+          var url = this.commonService.generateUrl('paper-list', this.exercise.id) + '#/' + this.exercise.id + '/' + paper.id;
           this.window.location = url;
         } else {
           // go to exercise home page
-          var url = CommonService.generateUrl('exercise-home', this.exercise.id);
+          var url = this.commonService.generateUrl('exercise-home', this.exercise.id);
           this.window.location = url;
         }
       }.bind(this));
     } else if (action && action === 'interrupt') {
       // go to exercise home page
-      var url = CommonService.generateUrl('exercise-home', this.exercise.id);
+      var url = this.commonService.generateUrl('exercise-home', this.exercise.id);
       this.window.location = url;
     } else {
       var url = Routing.generate('ujm_sequence_error', {
@@ -150,7 +151,7 @@ export default class ExercisePlayerCtrl {
    * @returns {Boolean}
    */
   checkCorrectionAvailability () {
-    var correctionMode = CommonService.getCorrectionMode(this.exercise.meta.correctionMode);
+    var correctionMode = this.commonService.getCorrectionMode(this.exercise.meta.correctionMode);
     switch (correctionMode) {
       case "test-end":
         return true;

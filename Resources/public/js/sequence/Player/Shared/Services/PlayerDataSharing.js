@@ -1,5 +1,5 @@
 export default class PlayerDataSharing{
-  constructor($http, $filter, $q){
+  constructor(){
     this.exercise = {};
     this.paper = {};
     this.user = {};

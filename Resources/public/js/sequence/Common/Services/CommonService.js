@@ -1,8 +1,10 @@
 export default class CommonService {
-  constructor($http, $filter, $q) {
-    this.http = $http;
-    this.filter = $filter;
-    this.q = $q;
+
+  static get $inject(){ return ['$http', '$q']; }
+
+  constructor($http, $q) {
+    this.$http = $http;
+    this.$q = $q;
 
 
     this.sequence = {};
@@ -62,8 +64,8 @@ export default class CommonService {
   }
 
   countFinishedPaper(id) {
-    var deferred = this.q.defer();
-    this.http
+    var deferred = this.$q.defer();
+    this.$http
       .get(
         Routing.generate('exercise_papers_count', {
           id: id

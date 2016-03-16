@@ -1,9 +1,12 @@
 export default class QuestionService {
+
+  static get $inject(){ return ['$http', '$filter', '$q', '$window', 'PlayerDataSharing']; }
+
   constructor($http, $filter, $q, $window, PlayerDataSharing){
-    this.q = $q;
-    this.http = $http;
-    this.filter = $filter;
-    this.window = $window;
+    this.$q = $q;
+    this.$http = $http;
+    this.$filter = $filter;
+    this.$window = $window;
     this.PlayerDataSharing = PlayerDataSharing;
   }
 
@@ -12,9 +15,9 @@ export default class QuestionService {
    * @returns promise
    */
   getHint (hid) {
-      var deferred = this.q.defer();
+      var deferred = this.$q.defer();
       var paper = this.PlayerDataSharing.getPaper();
-      this.http
+      this.$http
               .get(
                       Routing.generate('exercice_hint', {paperId: paper.id, hintId: hid})
                       )
@@ -26,7 +29,7 @@ export default class QuestionService {
                   var msg = data && data.error && data.error.message ? data.error.message : 'QuestionService get hint error';
                   var code = data && data.error && data.error.code ? data.error.code : 400;
                   var url = Routing.generate('ujm_sequence_error', {message:msg, code:code});
-                  this.window.location = url;
+                  this.$window.location = url;
               });
 
       return deferred.promise;
@@ -50,8 +53,8 @@ export default class QuestionService {
    * @returns {$q@call;defer.promise}
    */
   getQuestionSolutions(id){
-      var deferred = this.q.defer();
-      this.http
+      var deferred = this.$q.defer();
+      this.$http
               .get(
                   Routing.generate('get_question_solutions', {id: id})
               )
@@ -63,7 +66,7 @@ export default class QuestionService {
                   var msg = data && data.error && data.error.message ? data.error.message : 'QuestionService get solutions error';
                   var code = data && data.error && data.error.code ? data.error.code : 400;
                   var url = Routing.generate('ujm_sequence_error', {message:msg, code:code});
-                  this.window.location = url;
+                  this.$window.location = url;
               });
 
       return deferred.promise;
