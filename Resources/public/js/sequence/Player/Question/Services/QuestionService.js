@@ -17,6 +17,7 @@ export default class QuestionService {
   getHint (hid) {
       var deferred = this.$q.defer();
       var paper = this.PlayerDataSharing.getPaper();
+      var self = this;
       this.$http
               .get(
                       Routing.generate('exercice_hint', {paperId: paper.id, hintId: hid})
@@ -29,8 +30,9 @@ export default class QuestionService {
                   var msg = data && data.error && data.error.message ? data.error.message : 'QuestionService get hint error';
                   var code = data && data.error && data.error.code ? data.error.code : 400;
                   var url = Routing.generate('ujm_sequence_error', {message:msg, code:code});
+
                   this.$window.location = url;
-              });
+              }.bind(this));
 
       return deferred.promise;
   }
@@ -67,7 +69,7 @@ export default class QuestionService {
                   var code = data && data.error && data.error.code ? data.error.code : 400;
                   var url = Routing.generate('ujm_sequence_error', {message:msg, code:code});
                   this.$window.location = url;
-              });
+              }.bind(this));
 
       return deferred.promise;
   }

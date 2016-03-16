@@ -5,13 +5,10 @@ export default class ExerciseService{
   static get $inject(){ return ['$http', '$filter', '$q', '$window']; }
 
   constructor($http, $filter, $q, $window){
-    console.log('exercise service construct');
     this.$http = $http;
     this.$filter = $filter;
     this.$q = $q;
     this.$window = $window;
-
-    console.log($http);
   }
 
   getExercise(id){

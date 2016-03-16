@@ -1,6 +1,5 @@
 
 import ExercisePlayerCtrl from '../Controllers/ExercisePlayerCtrl'
-// import ExerciseService from '../Services/ExerciseService'
 
 export default class ExercisePlayer {
   constructor() {
@@ -10,7 +9,7 @@ export default class ExercisePlayer {
       user: '=',
       currentStepIndex: '='};
     this.restrict = 'E';
-    this.template = require('../Partials/player.directive.html'); //'bundles/ujmexo/js/sequence/Player/Exercise/Partials/player.directive.html',
+    this.template = require('../Partials/player.directive.html'); 
     this.replace = true;
     this.controller = ExercisePlayerCtrl;
     this.controllerAs = 'exercisePlayerCtrl';
@@ -21,5 +20,3 @@ export default class ExercisePlayer {
 }
 
 ExercisePlayerCtrl.$inject = ['$window', '$scope', 'ExerciseService', 'CommonService', 'PlayerDataSharing']
-
-// ExerciseService.$inject = ['$http', '$filter', '$q', '$window'];
