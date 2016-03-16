@@ -15,7 +15,6 @@ export default class ExercisePlayer {
     this.controller = ExercisePlayerCtrl;
     this.controllerAs = 'exercisePlayerCtrl';
     this.link = function (scope, element, attr, exercisePlayerCtrl) {
-        console.log('yep');
         exercisePlayerCtrl.init(scope.paper, scope.exercise, scope.user, scope.currentStepIndex);
     }
   }

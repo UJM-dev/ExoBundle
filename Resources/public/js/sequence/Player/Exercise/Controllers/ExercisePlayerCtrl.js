@@ -20,13 +20,10 @@ export default class ExercisePlayerCtrl {
 
   // init directive with appropriate data
   init(paper, exercise, user, currentStepIndex) {
-    console.log('init');
     this.exercise = this.playerDataSharing.setExercise(exercise);
     this.paper = this.playerDataSharing.setPaper(paper);
     this.user = this.playerDataSharing.setUser(user);
     this.currentStepIndex = currentStepIndex;
-
-    console.log(this.user);
     this.setCurrentStep(this.currentStepIndex);
   };
 
@@ -85,7 +82,7 @@ export default class ExercisePlayerCtrl {
     this.currentStepIndex = this.getNextStepIndex(this.currentStepIndex, action, index);
 
     // data set by question directive
-    var studentData = PlayerDataSharing.getStudentData();
+    var studentData = this.playerDataSharing.getStudentData();
     // save the given answer (even if empty !)
     var submitPromise = ExerciseService.submitAnswer(this.paper.id, studentData);
     submitPromise.then(function(result) {

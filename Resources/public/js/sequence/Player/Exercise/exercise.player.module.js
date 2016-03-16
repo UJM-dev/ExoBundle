@@ -8,6 +8,10 @@
 import ExercisePlayer from './Directives/player.directive'
 import PlayerDataSharing from '../Shared/Services/PlayerDataSharing'
 
+import CommonService from '../../Common/Services/CommonService'
+import QuestionService from '../Question/Services/QuestionService'
+import OpenQuestion from '../Question/Directives/OpenQuestionDirective'
+
 const dependencies = [
   'ngSanitize',
   'ngRoute',
@@ -32,7 +36,12 @@ angular.module('ExercisePlayerApp', dependencies)
   .directive(
     'exercisePlayer', () => new ExercisePlayer
   )
+  .directive(
+    'openQuestion', () => new OpenQuestion
+  )
 	.service('PlayerDataSharing', () => new PlayerDataSharing)
+  .service('CommonService', () => new CommonService)
+  .service('QuestionService', () => new QuestionService)
   .filter(
     'unsafe',
     function($sce) {
