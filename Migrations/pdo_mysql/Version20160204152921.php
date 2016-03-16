@@ -14,7 +14,7 @@ class Version20160204152921 extends AbstractMigration
 {
     public function up(Schema $schema)
     {
-        /*$this->addSql("
+        $this->addSql("
             CREATE TABLE ujm_object_question (
                 question_id INT NOT NULL,
                 ordre INT NOT NULL,
@@ -169,40 +169,12 @@ class Version20160204152921 extends AbstractMigration
         ");
         $this->addSql("
             CREATE INDEX IDX_C22A1EB5B87FAB32 ON ujm_label (resourceNode_id)
-        ");*/
-
-
-        $this->addSql("
-            ALTER TABLE ujm_proposal
-            ADD resourceNode_id INT DEFAULT NULL
-        ");
-
-        $this->addSql("
-            ALTER TABLE ujm_question
-            ADD supplementary LONGTEXT DEFAULT NULL,
-            ADD specification LONGTEXT DEFAULT NULL
-        ");
-
-        $this->addSql("
-            ALTER TABLE ujm_label
-            ADD resourceNode_id INT DEFAULT NULL
-        ");
-
-        $this->addSql("
-            ALTER TABLE ujm_exercise
-            ADD anonymous TINYINT(1) DEFAULT NULL,
-            ADD type VARCHAR(255) NOT NULL
-        ");
-
-        $this->addSql("
-            ALTER TABLE ujm_paper
-            ADD score DOUBLE PRECISION NOT NULL
         ");
     }
 
     public function down(Schema $schema)
     {
-        /*$this->addSql("
+        $this->addSql("
             ALTER TABLE ujm_step_question
             DROP FOREIGN KEY FK_D22EA1CE73B21E9C
         ");
@@ -285,16 +257,6 @@ class Version20160204152921 extends AbstractMigration
             ALTER TABLE ujm_question
             DROP supplementary,
             DROP specification
-        ");*/
-
-        $this->addSql("
-            ALTER TABLE ujm_exercise
-            DROP anonymous,
-            DROP type
-        ");
-        $this->addSql("
-            ALTER TABLE ujm_paper
-            DROP score
         ");
     }
 }
