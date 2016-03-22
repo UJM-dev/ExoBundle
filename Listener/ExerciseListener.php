@@ -105,46 +105,29 @@ class ExerciseListener extends ContainerAware
                 )
             );
 
-        if (count($papers) == 0) {
-
-             $eqs = $em->getRepository('UJMExoBundle:ExerciseQuestion')
-                ->findBy(array(
-                    'exercise' => $event->getResource()->getId()
-                    )
-                );
-
-            foreach ($eqs as $eq) {
-                $em->remove($eq);
-            }
-
-            $subscriptions = $em->getRepository('UJMExoBundle:Subscription')
-                ->findBy(array(
-                    'exercise' => $event->getResource()->getId()
-                    )
-                );
-
-            foreach ($subscriptions as $subscription) {
-                $em->remove($subscription);
-            }
-
-            $em->flush();
-
-            $em->remove($event->getResource());
-
-        } else {
-
-            $exercise = $em->getRepository('UJMExoBundle:Exercise')->find($event->getResource()->getId());
-            $resourceNode = $em->getRepository('ClarolineCoreBundle:Resource\ResourceNode')->find(
-                $exercise->getResourceNode()->getId()
+        $eqs = $em->getRepository('UJMExoBundle:ExerciseQuestion')
+            ->findBy(array(
+                'exercise' => $event->getResource()->getId()
+                )
             );
 
-            $em->remove($resourceNode);
-
-            $exercise->archiveExercise();
-            $em->persist($exercise);
-            $em->flush();
-            exit();
+        foreach ($eqs as $eq) {
+            $em->remove($eq);
         }
+
+        $subscriptions = $em->getRepository('UJMExoBundle:Subscription')
+            ->findBy(array(
+                'exercise' => $event->getResource()->getId()
+                )
+            );
+
+        foreach ($subscriptions as $subscription) {
+            $em->remove($subscription);
+        }
+
+        $em->flush();
+
+        $em->remove($event->getResource());
 
         $event->stopPropagation();
     }
