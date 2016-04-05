@@ -295,7 +295,7 @@ class PaperController extends Controller
         }
 
         foreach ($papersUser as $p) {
-            $arrayMarkPapers[$p->getId()] = $this->container->get('ujm.exo_exercise')->getInfosPaper($p);
+            $arrayMarkPapers[$p->getId()] = $this->container->get('ujm.exo_paper')->getInfosPaper($p);
         }
 
         if (count($papersUser) > 0) {
