@@ -64,7 +64,7 @@ class ExerciseController extends Controller
      */
     public function updateAction(Exercise $exercise)
     {
-        $entity = $exercise->getid();
+        $entity = $exercise;
 
         if (!$entity) {
             throw $this->createNotFoundException('Unable to find Exercise entity.');
