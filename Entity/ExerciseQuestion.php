@@ -21,7 +21,7 @@ class ExerciseQuestion
 
     /**
      * @ORM\Id
-     * @ORM\ManyToOne(targetEntity="UJM\ExoBundle\Entity\Question")
+     * @ORM\ManyToOne(targetEntity="UJM\ExoBundle\Entity\Question", inversedBy="exerciseQuestions")
      * @ORM\JoinColumn(onDelete="CASCADE")
      */
     private $question;
